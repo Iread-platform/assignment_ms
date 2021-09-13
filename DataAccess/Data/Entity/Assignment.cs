@@ -10,4 +10,4 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public int AssignmentId { get; set; }
 
     }
-}
+}       

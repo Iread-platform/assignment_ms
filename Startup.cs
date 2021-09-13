@@ -147,16 +147,25 @@ namespace iread_assignment_ms
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iread_assignment_ms v1"));
             }
 
-            app.UseHttpsRedirection();
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+            }
+
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("_myAllowSpecificOrigins");
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseConsul(Configuration);
         }
     }
 }

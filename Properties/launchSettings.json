@@ -2,7 +2,7 @@
   "Release": "1",
   "ConsulConfig": {
     "Host": "http://localhost:8500",
-    "ServiceName": "interaction_ms"
+    "ServiceName": "assignment_ms"
   },
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost;Database=assignment_ms_db;Uid=codavia;Pwd=cod@v!@; convert zero datetime=True"

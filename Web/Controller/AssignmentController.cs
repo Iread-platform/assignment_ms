@@ -12,6 +12,8 @@ using System.Linq;
 using iread_assignment_ms.Web.Dto.Class;
 using iread_assignment_ms.Web.Util;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using iread_assignment_ms.Web.DTO.Story;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -60,13 +62,15 @@ namespace iread_assignment_ms.Web.Controller
                 return BadRequest();
             }
 
-            CheckAddValiadtion(assignment);
+            Assignment assignmentEntity = _mapper.Map<Assignment>(assignment);
+
+            CheckAddValiadtion(assignment, assignmentEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            Assignment assignmentEntity = _mapper.Map<Assignment>(assignment);
+
             assignmentEntity.TeacherId = User.Claims.Where(c => c.Type == "sub")
                 .Select(c => c.Value).SingleOrDefault(); ;
             assignmentEntity.TeacherFirstName = User.Claims.Where(c => c.Type == "FirstName")
@@ -80,7 +84,7 @@ namespace iread_assignment_ms.Web.Controller
 
         }
 
-        private void CheckAddValiadtion(AssignmentCreateDto assignment)
+        private void CheckAddValiadtion(AssignmentCreateDto assignment, Assignment assignmentEntity)
         {
             //check class id
             InnerClassDto classDto = _consulHttpClient.GetAsync<InnerClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
@@ -89,6 +93,50 @@ namespace iread_assignment_ms.Web.Controller
             {
                 ModelState.AddModelError("ClassId", "Class not found");
             }
+
+            //check stories' ids
+            string storyIds = "";
+            if (assignment.Stories == null || assignment.Stories.Count == 0)
+            {
+                ModelState.AddModelError("Stories", "stories empty");
+                return;
+            }
+
+            assignment.Stories.ForEach(r =>
+            {
+                storyIds += r.StoryId + ",";
+            });
+
+            storyIds = storyIds.Remove(storyIds.Length - 1);
+            Dictionary<string, string> formData = new Dictionary<string, string>();
+            formData.Add("ids", storyIds);
+            List<ViewStoryDto> res = new List<ViewStoryDto>();
+            res = _consulHttpClient.PostFormAsync<List<ViewStoryDto>>("story_ms", $"/api/Story/get-by-ids", formData, res).Result;
+
+            if (res == null || res.Count == 0)
+            {
+                ModelState.AddModelError("Stories", "Stories not found");
+                return;
+            }
+            assignmentEntity.AssignmentStories = new List<AssignmentStory>();
+            for (int index = 0; index < assignment.Stories.Count; index++)
+            {
+
+                if (res.ElementAt(index) == null)
+                {
+                    ModelState.AddModelError("Stories", $"Story with id = {assignment.Stories.ElementAt(index).StoryId} not found");
+                }
+                else
+                {
+                    assignmentEntity.AssignmentStories.Add(
+                        new AssignmentStory()
+                        {
+                            StorytId = res.ElementAt(index).StoryId,
+                            StoryTitle = res.ElementAt(index).Title
+                        });
+                }
+            }
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,8 +23,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public string TeacherFirstName { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string TeacherLastName { get; set; }
-
-
+        public List<AssignmentStory> AssignmentStories { get; set; }
 
     }
 }

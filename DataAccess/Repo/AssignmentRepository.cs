@@ -21,6 +21,11 @@ namespace iread_assignment_ms.DataAccess.Repo
             return await _context.Assignments.FindAsync(id);
         }
 
+        public async Task<List<Assignment>> GetByTeacher(string teacherId)
+        {
+            return await _context.Assignments.Where(a => a.TeacherId == teacherId).ToListAsync();
+        }
+
 
         public void Insert(Assignment assignment)
         {

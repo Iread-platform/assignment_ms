@@ -23,7 +23,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public string TeacherFirstName { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string TeacherLastName { get; set; }
-        public List<AssignmentStory> AssignmentStories { get; set; }
+        public List<AssignmentStory> Stories { get; set; }
         public List<AssignmentStatus> AssignmentStudents { get; set; }
 
 

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using iread_assignment_ms.DataAccess.Data;
 using iread_assignment_ms.DataAccess.Data.Entity;
+using iread_assignment_ms.Web.Dto.AssignmentDTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace iread_assignment_ms.DataAccess.Repo
@@ -10,10 +12,13 @@ namespace iread_assignment_ms.DataAccess.Repo
     public class AssignmentRepository : IAssignmentRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AssignmentRepository(AppDbContext context)
+
+        public AssignmentRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Assignment> GetById(int id)
@@ -52,5 +57,35 @@ namespace iread_assignment_ms.DataAccess.Repo
             return _context.Assignments.Any(r => r.AssignmentId == id);
         }
 
+        public async Task<List<AssignmenWithStorytDto>> GetByStudent(string studentId)
+        {
+
+            return await _context.Assignments
+                        .Include(s => s.AssignmentStudents)
+                        .Include(s => s.Stories)
+                        .Where(s => s.AssignmentStudents.Any(s => s.StudentId == studentId))
+                        .Select(r => new AssignmenWithStorytDto()
+                        {
+                            AssignmentId = r.AssignmentId,
+                            Stories = r.Stories != null && r.Stories.Count > 0 ? _mapper.Map<List<AssignmentStoryDto>>(r.Stories) : null,
+                            ClassId = r.ClassId,
+                            TeacherFirstName = r.TeacherFirstName,
+                            TeacherLastName = r.TeacherLastName,
+                            TeacherId = r.TeacherId,
+                            Status = r.AssignmentStudents.First() != null ? r.AssignmentStudents.First().Value : null,
+                            EndDate = r.EndDate,
+                            StartDate = r.StartDate
+                        })
+                        .ToListAsync();
+
+
+            // return await _context.AssignmentStatus
+            // .Where(s => s.StudentId == studentId)
+            // .Include(s => s.Assignment)
+            // .Select(r => new Assignment() { AssignmentId = r.AssignmentId.Value }
+            // ).
+            // ToListAsync();
+
+        }
     }
 }

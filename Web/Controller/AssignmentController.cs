@@ -51,6 +51,27 @@ namespace iread_assignment_ms.Web.Controller
         }
 
 
+        // GET: api/Assignment/get/of-mine
+        [HttpGet("get/of-mine")]
+        [Authorize(Roles = Policies.Student, AuthenticationSchemes = "Bearer")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetOfMine()
+        {
+            string myId = User.Claims.Where(c => c.Type == "sub")
+              .Select(c => c.Value).SingleOrDefault(); ;
+
+            List<AssignmenWithStorytDto> assignments = await _assignmentService.GetByStudent(myId);
+
+            if (assignments == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<List<AssignmenWithStorytDto>>(assignments));
+        }
+
+
         //POST: api/Assignment/add
         [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
         [HttpPost("add")]
@@ -146,7 +167,7 @@ namespace iread_assignment_ms.Web.Controller
                 ModelState.AddModelError("Stories", "Stories not found");
                 return;
             }
-            assignmentEntity.AssignmentStories = new List<AssignmentStory>();
+            assignmentEntity.Stories = new List<AssignmentStory>();
             for (int index = 0; index < assignment.Stories.Count; index++)
             {
 
@@ -156,7 +177,7 @@ namespace iread_assignment_ms.Web.Controller
                 }
                 else
                 {
-                    assignmentEntity.AssignmentStories.Add(
+                    assignmentEntity.Stories.Add(
                         new AssignmentStory()
                         {
                             StorytId = res.ElementAt(index).StoryId,

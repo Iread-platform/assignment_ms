@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using iread_assignment_ms.DataAccess;
 using iread_assignment_ms.DataAccess.Data.Entity;
+using iread_assignment_ms.Web.Dto.AssignmentDTO;
 
 namespace iread_assignment_ms.Web.Service
 {
@@ -38,5 +41,9 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository.getAssignmentRepository.Delete(assignment);
         }
 
+        internal async Task<List<AssignmenWithStorytDto>> GetByStudent(string myId)
+        {
+            return await _publicRepository.getAssignmentRepository.GetByStudent(myId);
+        }
     }
 }

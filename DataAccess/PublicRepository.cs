@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using iread_assignment_ms.DataAccess.Data;
 using iread_assignment_ms.DataAccess.Repo;
 
@@ -8,17 +9,21 @@ namespace iread_assignment_ms.DataAccess
     {
         private readonly AppDbContext _context;
         private IAssignmentRepository _assignmentRepository;
+        private readonly IMapper _mapper;
 
-        public PublicRepository(AppDbContext context)
+
+
+        public PublicRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public IAssignmentRepository getAssignmentRepository
         {
             get
             {
-                return _assignmentRepository ??= new AssignmentRepository(_context);
+                return _assignmentRepository ??= new AssignmentRepository(_context, _mapper);
             }
         }
     }

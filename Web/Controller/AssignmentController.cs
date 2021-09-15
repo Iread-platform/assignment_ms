@@ -9,11 +9,13 @@ using System;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
 using iread_assignment_ms.Web.Dto.UserDto;
 using System.Linq;
-using iread_assignment_ms.Web.Dto.Class;
 using iread_assignment_ms.Web.Util;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using iread_assignment_ms.Web.DTO.Story;
+using iread_assignment_ms.Web.Dto.School;
+using iread_assignment_ms.DataAccess.Data.Entity.Type;
+using iread_assignment_ms.DataAccess.Data.Type;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -86,15 +88,41 @@ namespace iread_assignment_ms.Web.Controller
 
         private void CheckAddValiadtion(AssignmentCreateDto assignment, Assignment assignmentEntity)
         {
-            //check class id
-            InnerClassDto classDto = _consulHttpClient.GetAsync<InnerClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
+            //check class id if exists
+            ClassDto classDto = _consulHttpClient.GetAsync<ClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
 
-            if (classDto == null || classDto.ClassId == 0)
+            if (classDto == null || classDto.ClassId == 0 || classDto.Archived)
             {
                 ModelState.AddModelError("ClassId", "Class not found");
             }
+            else
+            {
+                assignmentEntity.AssignmentStudents = new List<AssignmentStatus>();
 
-            //check stories' ids
+                // get student of class to create assignment foreach one
+                List<ViewStoryDto> student = new List<ViewStoryDto>();
+                if (classDto.Members != null || classDto.Members.Count > 0)
+                {
+                    classDto.Members.ForEach(m =>
+
+                    {
+                        if (m.ClassMembershipType.Equals(ClassMembershipType.Student.ToString()))
+                            assignmentEntity.AssignmentStudents.Add(
+                                new AssignmentStatus()
+                                {
+                                    Value = AssignmentStatusTypes.WaitingForSubmit.ToString(),
+                                    StudentFirstName = m.FirstName,
+                                    StudentLastName = m.LastName,
+                                    StudentId = m.MemberId
+                                }
+                            );
+                    }
+                    );
+                }
+
+            }
+
+            //check stories' ids if exist
             string storyIds = "";
             if (assignment.Stories == null || assignment.Stories.Count == 0)
             {

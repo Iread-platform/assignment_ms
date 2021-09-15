@@ -9,8 +9,8 @@ using iread_assignment_ms.DataAccess.Data;
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210914120933_story-status-assignment")]
-    partial class storystatusassignment
+    [Migration("20210915070723_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,9 +66,8 @@ namespace iread_assignment_ms.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .HasColumnType("text");
 
                     b.Property<string>("StudentLastName")
                         .IsRequired()
@@ -113,7 +112,7 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStatus", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany()
+                        .WithMany("AssignmentStudents")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -124,12 +123,19 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStory", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany()
+                        .WithMany("AssignmentStories")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>
+                {
+                    b.Navigation("AssignmentStories");
+
+                    b.Navigation("AssignmentStudents");
                 });
 #pragma warning restore 612, 618
         }

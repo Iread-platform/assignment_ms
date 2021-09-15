@@ -4,48 +4,27 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace iread_assignment_ms.Migrations
 {
-    public partial class storystatusassignment : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "ClassId",
-                table: "Assignments",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "EndDate",
-                table: "Assignments",
-                type: "datetime",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "StartDate",
-                table: "Assignments",
-                type: "datetime",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<string>(
-                name: "TeacherFirstName",
-                table: "Assignments",
-                type: "text",
-                nullable: false);
-
-            migrationBuilder.AddColumn<string>(
-                name: "TeacherId",
-                table: "Assignments",
-                type: "text",
-                nullable: false);
-
-            migrationBuilder.AddColumn<string>(
-                name: "TeacherLastName",
-                table: "Assignments",
-                type: "text",
-                nullable: false);
+            migrationBuilder.CreateTable(
+                name: "Assignments",
+                columns: table => new
+                {
+                    AssignmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    StartDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    ClassId = table.Column<int>(type: "int", nullable: false),
+                    TeacherId = table.Column<string>(type: "text", nullable: false),
+                    TeacherFirstName = table.Column<string>(type: "text", nullable: false),
+                    TeacherLastName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assignments", x => x.AssignmentId);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AssignmentStatus",
@@ -54,7 +33,7 @@ namespace iread_assignment_ms.Migrations
                     AssignmentStatusId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     AssignmentId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "text", nullable: true),
                     StudentFirstName = table.Column<string>(type: "text", nullable: false),
                     StudentLastName = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false)
@@ -110,29 +89,8 @@ namespace iread_assignment_ms.Migrations
             migrationBuilder.DropTable(
                 name: "AssignmentStory");
 
-            migrationBuilder.DropColumn(
-                name: "ClassId",
-                table: "Assignments");
-
-            migrationBuilder.DropColumn(
-                name: "EndDate",
-                table: "Assignments");
-
-            migrationBuilder.DropColumn(
-                name: "StartDate",
-                table: "Assignments");
-
-            migrationBuilder.DropColumn(
-                name: "TeacherFirstName",
-                table: "Assignments");
-
-            migrationBuilder.DropColumn(
-                name: "TeacherId",
-                table: "Assignments");
-
-            migrationBuilder.DropColumn(
-                name: "TeacherLastName",
-                table: "Assignments");
+            migrationBuilder.DropTable(
+                name: "Assignments");
         }
     }
 }

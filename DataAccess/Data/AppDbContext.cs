@@ -23,6 +23,8 @@ namespace iread_assignment_ms.DataAccess.Data
 
         //entities
         public DbSet<Assignment> Assignments { set; get; }
+        public DbSet<AssignmentStatus> AssignmentStatus { set; get; }
+        public DbSet<AssignmentStory> AssignmentStory { set; get; }
 
     }
 }

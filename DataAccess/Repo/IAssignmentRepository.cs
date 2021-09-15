@@ -15,5 +15,8 @@ namespace iread_assignment_ms.DataAccess.Repo
         public bool Exists(int id);
 
         public void Update(Assignment assignment, Assignment oldAssignment);
+
+        public Task<List<Assignment>> GetByTeacher(string teacherId);
+
     }
 }

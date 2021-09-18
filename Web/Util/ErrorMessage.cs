@@ -16,6 +16,7 @@ namespace iread_assignment_ms.Web.Util
         public const String Audio_ID_IS_REQUIRED = "Audio id is required.";
         public const String INVALID_Audio_ID_VALUE = "Invalid audio id value.";
         public const String FILE_EXTENSION_NOT_ALLOWED = "File extension is not allowed!.";
+        public const String TAG_TITLE_REQUIRED = "Tag title is required.";
 
 
         public static List<String> ModelStateParser(ModelStateDictionary modelStateDictionary)

@@ -14,7 +14,7 @@ namespace iread_assignment_ms.Web.Dto
         [Required]
         public Nullable<int> ClassId { get; set; }
 
-        public List<StoryDto> Stories { get; set; }
+        public List<DTO.StoryDto.StoryDto> Stories { get; set; }
 
     }
 }

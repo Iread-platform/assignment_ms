@@ -16,6 +16,8 @@ using iread_assignment_ms.Web.DTO.Story;
 using iread_assignment_ms.Web.Dto.School;
 using iread_assignment_ms.DataAccess.Data.Entity.Type;
 using iread_assignment_ms.DataAccess.Data.Type;
+using iread_assignment_ms.Web.Dto.AssignmentDto;
+using iread_assignment_ms.Web.Dto.StoryDto;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -61,14 +63,26 @@ namespace iread_assignment_ms.Web.Controller
             string myId = User.Claims.Where(c => c.Type == "sub")
               .Select(c => c.Value).SingleOrDefault(); ;
 
-            List<AssignmenWithStorytDto> assignments = await _assignmentService.GetByStudent(myId);
+            List<AssignmentWithStoryIdDto> assignments = await _assignmentService.GetByStudent(myId);
+            List<AssignmentWithStoryDto> assignmentWithStoryDto = new List<AssignmentWithStoryDto>();
 
-            if (assignments == null)
+
+            List<FullStoryDto> fullStories = new List<FullStoryDto>();
+            foreach (var assignment in assignments)
             {
-                return NotFound();
+                foreach (var story in assignment.Stories)
+                {
+                    FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
+                    fullStories.Add(fullStoryDto);
+                }
+                AssignmentWithStoryDto assignmentWithStoryDtoSingle = _mapper.Map<AssignmentWithStoryDto>(assignment);
+                assignmentWithStoryDtoSingle.Stories = fullStories;
+                
+                assignmentWithStoryDto.Add(assignmentWithStoryDtoSingle);
+                fullStories =  new List<FullStoryDto>();
             }
 
-            return Ok(_mapper.Map<List<AssignmenWithStorytDto>>(assignments));
+            return Ok(assignmentWithStoryDto);
         }
 
 
@@ -180,7 +194,7 @@ namespace iread_assignment_ms.Web.Controller
                     assignmentEntity.Stories.Add(
                         new AssignmentStory()
                         {
-                            StorytId = res.ElementAt(index).StoryId,
+                            StoryId = res.ElementAt(index).StoryId,
                             StoryTitle = res.ElementAt(index).Title
                         });
                 }

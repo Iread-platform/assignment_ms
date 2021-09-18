@@ -14,7 +14,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public Nullable<int> AssignmentId { get; set; }
         public Assignment Assignment { get; set; }
         [Required]
-        public Nullable<int> StorytId { get; set; }
+        public Nullable<int> StoryId { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string StoryTitle { get; set; }
 

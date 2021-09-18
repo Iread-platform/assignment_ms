@@ -16,6 +16,7 @@ using iread_assignment_ms.Web.DTO.Story;
 using iread_assignment_ms.Web.Dto.School;
 using iread_assignment_ms.DataAccess.Data.Entity.Type;
 using iread_assignment_ms.DataAccess.Data.Type;
+using iread_assignment_ms.Web.Dto.StoryDto;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -61,14 +62,19 @@ namespace iread_assignment_ms.Web.Controller
             string myId = User.Claims.Where(c => c.Type == "sub")
               .Select(c => c.Value).SingleOrDefault(); ;
 
-            List<AssignmenWithStorytDto> assignments = await _assignmentService.GetByStudent(myId);
-
-            if (assignments == null)
+            List<AssignmentWithStoryIdDto> assignments = await _assignmentService.GetByStudent(myId);
+            
+            foreach (var assignment in assignments)
             {
-                return NotFound();
+                foreach (var story in assignment.Stories)
+                {
+                    FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StorytId}").GetAwaiter().GetResult();
+                    
+                }
             }
-
-            return Ok(_mapper.Map<List<AssignmenWithStorytDto>>(assignments));
+            
+            
+            return Ok(_mapper.Map<List<AssignmentWithStoryIdDto>>(assignments));
         }
 
 

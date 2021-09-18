@@ -5,7 +5,7 @@ using iread_assignment_ms.DataAccess.Data.Entity;
 namespace iread_assignment_ms.Web.Dto.AssignmentDTO
 {
 
-    public class AssignmenWithStorytDto
+    public class AssignmentWithStoryIdDto
     {
         public int AssignmentId { get; set; }
         public string Status { get; set; }
@@ -15,7 +15,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherId { get; set; }
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
-        public List<AssignmentStoryDto> Stories { get; set; }
+        public List<AssignmentStoryIdDto> Stories { get; set; }
 
 
 

@@ -9,12 +9,12 @@ namespace iread_assignment_ms.Web.Profile
         public AutoMapperProfile()
         {
             CreateMap<Assignment, AssignmentDto>().ReverseMap();
-            CreateMap<Assignment, AssignmenWithStorytDto>().ReverseMap();
+            CreateMap<Assignment, AssignmentWithStoryIdDto>().ReverseMap();
 
             CreateMap<AssignmentCreateDto, Assignment>();
 
             CreateMap<AssignmentStatus, AssignmentStatusDto>().ReverseMap();
-            CreateMap<AssignmentStory, AssignmentStoryDto>().ReverseMap();
+            CreateMap<AssignmentStory, AssignmentStoryIdDto>().ReverseMap();
 
         }
     }

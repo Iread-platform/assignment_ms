@@ -16,8 +16,10 @@ using iread_assignment_ms.Web.DTO.Story;
 using iread_assignment_ms.Web.Dto.School;
 using iread_assignment_ms.DataAccess.Data.Entity.Type;
 using iread_assignment_ms.DataAccess.Data.Type;
+using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
+
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -27,13 +29,18 @@ namespace iread_assignment_ms.Web.Controller
     {
         private readonly IMapper _mapper;
         private readonly AssignmentService _assignmentService;
+        private readonly MultiChoiceService _multiChoiceService;
+
         private readonly IConsulHttpClientService _consulHttpClient;
 
-        public AssignmentController(AssignmentService assignmentService, IMapper mapper, IConsulHttpClientService consulHttpClient)
+        public AssignmentController(AssignmentService assignmentService,
+        MultiChoiceService multiChoiceService,
+         IMapper mapper, IConsulHttpClientService consulHttpClient)
         {
             _assignmentService = assignmentService;
             _mapper = mapper;
             _consulHttpClient = consulHttpClient;
+            _multiChoiceService = multiChoiceService;
         }
 
         // GET: api/Assignment/get/1
@@ -77,12 +84,45 @@ namespace iread_assignment_ms.Web.Controller
                 }
                 AssignmentWithStoryDto assignmentWithStoryDtoSingle = _mapper.Map<AssignmentWithStoryDto>(assignment);
                 assignmentWithStoryDtoSingle.Stories = fullStories;
-                
+
                 assignmentWithStoryDto.Add(assignmentWithStoryDtoSingle);
-                fullStories =  new List<FullStoryDto>();
+                fullStories = new List<FullStoryDto>();
             }
 
             return Ok(assignmentWithStoryDto);
+        }
+
+
+
+
+        //POST: api/Assignment/3/add-multi-choice-question
+        [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
+        [HttpPost("{id}/add-multi-choice-question")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult InsertQuestion([FromRoute] int id,
+        [FromBody] MultiChoiceCreateDto multiChoice)
+        {
+            // check if the assignment exist
+            Assignment assignmentEntity = _assignmentService.GetById(id).GetAwaiter().GetResult();
+            if (assignmentEntity == null)
+            {
+                ModelState.AddModelError("Id", "Assignment not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            CheckAddMultiChoicesValiadtion(multiChoice, assignmentEntity);
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            MultiChoice multiChoiceEntity = _mapper.Map<MultiChoice>(multiChoice);
+            multiChoiceEntity.AssignmentId = id;
+            multiChoiceEntity.Type = QuestionType.MultiChoice.ToString();
+            _multiChoiceService.Insert(multiChoiceEntity, multiChoice.RightChoiceIndex);
+
+            return Ok(multiChoiceEntity);
         }
 
 
@@ -198,6 +238,30 @@ namespace iread_assignment_ms.Web.Controller
                             StoryTitle = res.ElementAt(index).Title
                         });
                 }
+            }
+
+        }
+
+        private void CheckAddMultiChoicesValiadtion(MultiChoiceCreateDto multiChoice, Assignment assignmentEntity)
+        {
+            // check if the teacher the owner of this assignment
+            string teacherId = User.Claims.Where(c => c.Type == "sub")
+                .Select(c => c.Value).SingleOrDefault();
+            if (assignmentEntity.TeacherId != teacherId)
+            {
+                ModelState.AddModelError("TeacherId", "Assignment is not yours");
+            }
+
+            // check if the choices not empty and more than one
+            if (multiChoice.Choices.Count < 2)
+            {
+                ModelState.AddModelError("Choices", "Choices should be at least 2 options");
+            }
+
+            // check if the index of right choice valid
+            if (!(multiChoice.RightChoiceIndex > -1 && multiChoice.RightChoiceIndex < multiChoice.Choices.Count))
+            {
+                ModelState.AddModelError("RightChoiceIndex", $"RightChoiceIndex should be from [0] to [{multiChoice.Choices.Count - 1}]");
             }
 
         }

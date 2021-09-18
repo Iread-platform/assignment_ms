@@ -25,6 +25,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public string TeacherLastName { get; set; }
         public List<AssignmentStory> Stories { get; set; }
         public List<AssignmentStatus> AssignmentStudents { get; set; }
+        public List<MultiChoice> MultiChoices { get; set; }
 
 
     }

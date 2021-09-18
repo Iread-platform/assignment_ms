@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using iread_assignment_ms.Web.Dto.MultiChoice;
 
 namespace iread_assignment_ms.Web.Dto.AssignmentDTO
 {
@@ -12,6 +14,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherId { get; set; }
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
+        public List<MultiChoiceDto> MultiChoices { get; set; }
 
 
     }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210915121145_multi-choice-question")]
+    partial class multichoicequestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,13 +94,13 @@ namespace iread_assignment_ms.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int?>("StoryId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<string>("StoryTitle")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("StorytId")
+                        .IsRequired()
+                        .HasColumnType("int");
 
                     b.HasKey("AssignmentStoryId");
 
@@ -117,6 +119,7 @@ namespace iread_assignment_ms.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("QuestionId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -165,7 +168,7 @@ namespace iread_assignment_ms.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int?>("RightChoiceId")
+                    b.Property<int>("RightChoiceId")
                         .HasColumnType("int");
 
                     b.HasIndex("AssignmentId");
@@ -205,7 +208,9 @@ namespace iread_assignment_ms.Migrations
 
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Question", "Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Question");
                 });
@@ -220,7 +225,9 @@ namespace iread_assignment_ms.Migrations
 
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Choice", "RightChoice")
                         .WithMany()
-                        .HasForeignKey("RightChoiceId");
+                        .HasForeignKey("RightChoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Assignment");
 
@@ -237,9 +244,6 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.Navigation("Choices");
-
-                    b.Navigation("AssignmentStudents");
-
                 });
 #pragma warning restore 612, 618
         }

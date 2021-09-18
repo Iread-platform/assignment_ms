@@ -25,6 +25,11 @@ namespace iread_assignment_ms.DataAccess.Data
         public DbSet<Assignment> Assignments { set; get; }
         public DbSet<AssignmentStatus> AssignmentStatus { set; get; }
         public DbSet<AssignmentStory> AssignmentStory { set; get; }
+        public DbSet<Question> Question { set; get; }
+        public DbSet<Choice> Choice { set; get; }
+        public DbSet<MultiChoice> MultiChoice { set; get; }
+
+
 
     }
 }

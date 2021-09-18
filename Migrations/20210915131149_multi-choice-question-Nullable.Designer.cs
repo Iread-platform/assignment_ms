@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210915131149_multi-choice-question-Nullable")]
+    partial class multichoicequestionNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,6 +119,7 @@ namespace iread_assignment_ms.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("QuestionId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -205,7 +208,9 @@ namespace iread_assignment_ms.Migrations
 
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Question", "Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Question");
                 });

@@ -164,6 +164,7 @@ namespace iread_assignment_ms
 
             //services
             services.AddScoped<AssignmentService>();
+            services.AddScoped<MultiChoiceService>();
 
         }
 

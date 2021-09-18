@@ -23,7 +23,10 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public async Task<Assignment> GetById(int id)
         {
-            return await _context.Assignments.FindAsync(id);
+            return await _context.Assignments
+            .Include(a => a.MultiChoices)
+            .ThenInclude(m => m.Choices)
+            .Where(a => a.AssignmentId == id).SingleOrDefaultAsync();
         }
 
         public async Task<List<Assignment>> GetByTeacher(string teacherId)

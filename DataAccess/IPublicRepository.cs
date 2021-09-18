@@ -4,6 +4,8 @@ namespace iread_assignment_ms.DataAccess
 {
     public interface IPublicRepository
     {
-        IAssignmentRepository getAssignmentRepository { get; }
+        IAssignmentRepository GetAssignmentRepository { get; }
+
+        IMultiChoiceRepository GetMultiChoiceRepository { get; }
     }
 }

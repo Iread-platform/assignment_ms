@@ -41,7 +41,7 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository.GetAssignmentRepository.Delete(assignment);
         }
 
-        internal async Task<List<AssignmenWithStorytDto>> GetByStudent(string myId)
+        internal async Task<List<AssignmentWithStoryIdDto>> GetByStudent(string myId)
         {
             return await _publicRepository.GetAssignmentRepository.GetByStudent(myId);
         }

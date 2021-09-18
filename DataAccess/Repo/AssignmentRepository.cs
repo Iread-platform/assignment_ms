@@ -60,17 +60,17 @@ namespace iread_assignment_ms.DataAccess.Repo
             return _context.Assignments.Any(r => r.AssignmentId == id);
         }
 
-        public async Task<List<AssignmenWithStorytDto>> GetByStudent(string studentId)
+        public async Task<List<AssignmentWithStoryIdDto>> GetByStudent(string studentId)
         {
 
             return await _context.Assignments
                         .Include(s => s.AssignmentStudents)
                         .Include(s => s.Stories)
                         .Where(s => s.AssignmentStudents.Any(s => s.StudentId == studentId))
-                        .Select(r => new AssignmenWithStorytDto()
+                        .Select(r => new AssignmentWithStoryIdDto()
                         {
                             AssignmentId = r.AssignmentId,
-                            Stories = r.Stories != null && r.Stories.Count > 0 ? _mapper.Map<List<AssignmentStoryDto>>(r.Stories) : null,
+                            Stories = r.Stories != null && r.Stories.Count > 0 ? _mapper.Map<List<AssignmentStoryIdDto>>(r.Stories) : null,
                             ClassId = r.ClassId,
                             TeacherFirstName = r.TeacherFirstName,
                             TeacherLastName = r.TeacherLastName,

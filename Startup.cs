@@ -58,6 +58,11 @@ namespace iread_assignment_ms
             // for routing
             services.AddControllers();
 
+            // for stop looping of json result
+            services.AddMvc()
+            .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             // for connection of DB
             services.AddDbContext<AppDbContext>(
                 options =>
@@ -165,6 +170,8 @@ namespace iread_assignment_ms
             //services
             services.AddScoped<AssignmentService>();
             services.AddScoped<MultiChoiceService>();
+            services.AddScoped<EssayQuestionService>();
+
 
         }
 

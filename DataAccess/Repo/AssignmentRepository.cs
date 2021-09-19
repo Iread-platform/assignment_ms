@@ -26,6 +26,7 @@ namespace iread_assignment_ms.DataAccess.Repo
             return await _context.Assignments
             .Include(a => a.MultiChoices)
             .ThenInclude(m => m.Choices)
+            .Include(a => a.EssayQuestions)
             .Where(a => a.AssignmentId == id).SingleOrDefaultAsync();
         }
 

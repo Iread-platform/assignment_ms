@@ -15,6 +15,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
         public List<MultiChoiceDto> MultiChoices { get; set; }
+        public List<EssayQuestionDto> EssayQuestions { get; set; }
 
 
     }

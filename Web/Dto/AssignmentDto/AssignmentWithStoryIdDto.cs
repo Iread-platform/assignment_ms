@@ -18,7 +18,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherLastName { get; set; }
         public List<AssignmentStoryIdDto> Stories { get; set; }
 
-        public List<AssignmentAttachmentDto> Attachments { get; set; }
+        public List<AttachmentIdDto> Attachments { get; set; }
 
     }
 }

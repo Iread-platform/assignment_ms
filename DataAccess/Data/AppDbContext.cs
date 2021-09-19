@@ -18,7 +18,10 @@ namespace iread_assignment_ms.DataAccess.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<Assignment>()
+                .HasMany(a => a.Attachments)
+                .WithOne(a => a.Assignment)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         //entities
@@ -28,8 +31,7 @@ namespace iread_assignment_ms.DataAccess.Data
         public DbSet<Question> Question { set; get; }
         public DbSet<Choice> Choice { set; get; }
         public DbSet<MultiChoice> MultiChoice { set; get; }
-
-
-
+        public DbSet<AssignmentAttachment> AssignmentAttachments { set; get; }
+        
     }
 }

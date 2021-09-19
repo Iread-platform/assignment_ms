@@ -10,6 +10,7 @@ namespace iread_assignment_ms.DataAccess
         private readonly AppDbContext _context;
         private IAssignmentRepository _assignmentRepository;
         private IMultiChoiceRepository _multiChoiceRepository;
+        private IAttachmentRepository _attachmentRepository;
 
         private readonly IMapper _mapper;
 
@@ -34,6 +35,15 @@ namespace iread_assignment_ms.DataAccess
             get
             {
                 return _multiChoiceRepository ??= new MultiChoiceRepository(_context, _mapper);
+            }
+
+        }
+        
+        public IAttachmentRepository GetAttachmentRepository
+        {
+            get
+            {
+                return _attachmentRepository ??= new AttachmentRepository(_context);
             }
 
         }

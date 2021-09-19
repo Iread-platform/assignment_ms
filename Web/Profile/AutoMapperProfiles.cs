@@ -2,6 +2,7 @@ using iread_assignment_ms.DataAccess.Data.Entity;
 using iread_assignment_ms.Web.Dto;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
+using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.StoryDto;
 using iread_assignment_ms.Web.DTO.StoryDto;
@@ -22,6 +23,9 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AssignmentStory, StoryDto>().ReverseMap();
             CreateMap<AssignmentWithStoryIdDto, AssignmentWithStoryDto>().ReverseMap();
             CreateMap<AssignmentStoryIdDto, FullStoryDto>().ReverseMap();
+            
+            //Attachment
+            CreateMap<AttachmentIdDto , AssignmentAttachment>().ReverseMap();
 
 
             CreateMap<MultiChoiceCreateDto, MultiChoice>();

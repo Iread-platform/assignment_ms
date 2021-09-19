@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using iread_assignment_ms.DataAccess.Data.Entity;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 
 namespace iread_assignment_ms.Web.Dto.AssignmentDTO
@@ -15,7 +16,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
         public List<MultiChoiceDto> MultiChoices { get; set; }
-
+        public List<AssignmentAttachment> Attachments { get; set; }
 
     }
 }

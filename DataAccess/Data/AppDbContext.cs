@@ -28,6 +28,8 @@ namespace iread_assignment_ms.DataAccess.Data
         public DbSet<Question> Question { set; get; }
         public DbSet<Choice> Choice { set; get; }
         public DbSet<MultiChoice> MultiChoice { set; get; }
+        public DbSet<EssayQuestion> EssayQuestion { set; get; }
+
 
 
 

@@ -7,5 +7,8 @@ namespace iread_assignment_ms.DataAccess
         IAssignmentRepository GetAssignmentRepository { get; }
 
         IMultiChoiceRepository GetMultiChoiceRepository { get; }
+
+        IEssayQuestionRepository GetEssayQuestionRepository { get; }
+
     }
 }

@@ -138,6 +138,10 @@ namespace iread_assignment_ms.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("AssignmentId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("text");
@@ -161,10 +165,6 @@ namespace iread_assignment_ms.Migrations
                 {
                     b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
 
-                    b.Property<int?>("AssignmentId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<int?>("RightChoiceId")
                         .HasColumnType("int");
 
@@ -178,7 +178,7 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStatus", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany("AssignmentStudents")
+                        .WithMany("AssignmentStatuses")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -203,17 +203,17 @@ namespace iread_assignment_ms.Migrations
                         .WithMany("Choices")
                         .HasForeignKey("MultiChoiceQuestionId");
 
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Question", "Question")
+                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Question", "MultiChoice")
                         .WithMany()
                         .HasForeignKey("QuestionId");
 
-                    b.Navigation("Question");
+                    b.Navigation("MultiChoice");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany()
+                        .WithMany("MultiChoices")
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -229,7 +229,9 @@ namespace iread_assignment_ms.Migrations
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>
                 {
-                    b.Navigation("AssignmentStudents");
+                    b.Navigation("AssignmentStatuses");
+
+                    b.Navigation("MultiChoices");
 
                     b.Navigation("Stories");
                 });
@@ -237,9 +239,6 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.Navigation("Choices");
-
-                    b.Navigation("AssignmentStudents");
-
                 });
 #pragma warning restore 612, 618
         }

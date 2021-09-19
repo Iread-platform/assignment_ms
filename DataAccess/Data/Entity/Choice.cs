@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using iread_assignment_ms.DataAccess.Data.Entity.Type;
 
 namespace iread_assignment_ms.DataAccess.Data.Entity
 {
@@ -15,7 +14,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         [Required(AllowEmptyStrings = false)]
         public string Text { get; set; }
         public Nullable<int> QuestionId { get; set; }
-        public Question Question { get; set; }
+        public Question MultiChoice { get; set; }
 
     }
 }

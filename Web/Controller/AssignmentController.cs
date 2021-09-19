@@ -172,7 +172,7 @@ namespace iread_assignment_ms.Web.Controller
             }
             else
             {
-                assignmentEntity.AssignmentStudents = new List<AssignmentStatus>();
+                assignmentEntity.AssignmentStatuses = new List<AssignmentStatus>();
 
                 // get student of class to create assignment foreach one
                 List<ViewStoryDto> student = new List<ViewStoryDto>();
@@ -182,7 +182,7 @@ namespace iread_assignment_ms.Web.Controller
 
                     {
                         if (m.ClassMembershipType.Equals(ClassMembershipType.Student.ToString()))
-                            assignmentEntity.AssignmentStudents.Add(
+                            assignmentEntity.AssignmentStatuses.Add(
                                 new AssignmentStatus()
                                 {
                                     Value = AssignmentStatusTypes.WaitingForSubmit.ToString(),

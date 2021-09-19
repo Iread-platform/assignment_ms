@@ -20,6 +20,7 @@ using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
 using iread_assignment_ms.Web.Dto.EssayQuestion;
+using iread_assignment_ms.Web.Dto.Interaction;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -31,12 +32,13 @@ namespace iread_assignment_ms.Web.Controller
         private readonly AssignmentService _assignmentService;
         private readonly MultiChoiceService _multiChoiceService;
         private readonly EssayQuestionService _essayQuestionService;
-
+        private readonly InteractionQuestionService _interactionQuestionService;
         private readonly IConsulHttpClientService _consulHttpClient;
 
         public AssignmentController(AssignmentService assignmentService,
         MultiChoiceService multiChoiceService,
         EssayQuestionService essayQuestionService,
+        InteractionQuestionService interactionQuestionService,
          IMapper mapper, IConsulHttpClientService consulHttpClient)
         {
             _assignmentService = assignmentService;
@@ -44,6 +46,7 @@ namespace iread_assignment_ms.Web.Controller
             _consulHttpClient = consulHttpClient;
             _multiChoiceService = multiChoiceService;
             _essayQuestionService = essayQuestionService;
+            _interactionQuestionService = interactionQuestionService;
         }
 
         // GET: api/Assignment/get/1
@@ -158,6 +161,39 @@ namespace iread_assignment_ms.Web.Controller
             _essayQuestionService.Insert(essayQuestionEntity);
 
             return Ok(_mapper.Map<EssayQuestionDto>(essayQuestionEntity));
+        }
+
+
+        //POST: api/Assignment/3/add-essay-question
+        [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
+        [HttpPost("{id}/add-interaction-question")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult InsertInteractionQuestion([FromRoute] int id,
+        [FromBody] InteractionQuestionCreateDto interactionQuestion)
+        {
+            // check if the assignment exist
+            Assignment assignmentEntity = _assignmentService.GetById(id).GetAwaiter().GetResult();
+            if (assignmentEntity == null)
+            {
+                ModelState.AddModelError("Id", "Assignment not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            // check if the teacher the owner of this assignment
+            CheckAssignment(assignmentEntity);
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            InteractionQuestion interactionQuestionEntity = _mapper.Map<InteractionQuestion>(interactionQuestion);
+            interactionQuestionEntity.AssignmentId = id;
+            interactionQuestionEntity.Type = QuestionType.Interaction.ToString();
+            _interactionQuestionService.Insert(interactionQuestionEntity);
+
+            return Ok(_mapper.Map<InteractionQuestionDto>(interactionQuestionEntity));
         }
 
         //POST: api/Assignment/add

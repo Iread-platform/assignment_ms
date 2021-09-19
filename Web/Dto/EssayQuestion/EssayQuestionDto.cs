@@ -1,7 +1,7 @@
 
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
 
-namespace iread_assignment_ms.Web.Dto.MultiChoice
+namespace iread_assignment_ms.Web.Dto.EssayQuestion
 {
     public class EssayQuestionDto
     {

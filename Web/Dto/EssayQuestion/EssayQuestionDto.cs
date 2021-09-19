@@ -7,6 +7,5 @@ namespace iread_assignment_ms.Web.Dto.MultiChoice
     {
         public int QuestionId { get; set; }
         public string Text { get; set; }
-        public InnerAssignmentDto Assignment { get; set; }
     }
 }

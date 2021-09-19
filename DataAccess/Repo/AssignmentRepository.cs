@@ -64,9 +64,9 @@ namespace iread_assignment_ms.DataAccess.Repo
         {
 
             return await _context.Assignments
-                        .Include(s => s.AssignmentStudents)
+                        .Include(s => s.AssignmentStatuses)
                         .Include(s => s.Stories)
-                        .Where(s => s.AssignmentStudents.Any(s => s.StudentId == studentId))
+                        .Where(s => s.AssignmentStatuses.Any(s => s.StudentId == studentId))
                         .Select(r => new AssignmentWithStoryIdDto()
                         {
                             AssignmentId = r.AssignmentId,
@@ -75,7 +75,7 @@ namespace iread_assignment_ms.DataAccess.Repo
                             TeacherFirstName = r.TeacherFirstName,
                             TeacherLastName = r.TeacherLastName,
                             TeacherId = r.TeacherId,
-                            Status = r.AssignmentStudents.First() != null ? r.AssignmentStudents.First().Value : null,
+                            Status = r.AssignmentStatuses.First() != null ? r.AssignmentStatuses.First().Value : null,
                             EndDate = r.EndDate,
                             StartDate = r.StartDate
                         })

@@ -24,7 +24,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         [Required(AllowEmptyStrings = false)]
         public string TeacherLastName { get; set; }
         public List<AssignmentStory> Stories { get; set; }
-        public List<AssignmentStatus> AssignmentStudents { get; set; }
+        public List<AssignmentStatus> AssignmentStatuses { get; set; }
         public List<MultiChoice> MultiChoices { get; set; }
         
         public List<AssignmentAttachment> Attachments { get; set; }

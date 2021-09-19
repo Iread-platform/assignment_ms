@@ -20,8 +20,9 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
 
         [EnumDataType(typeof(QuestionType))]
         public string Type { get; set; }
-
-
+        [Required]
+        public Nullable<int> AssignmentId { get; set; }
+        public Assignment Assignment { get; set; }
 
 
     }

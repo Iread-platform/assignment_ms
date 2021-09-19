@@ -56,7 +56,7 @@ namespace iread_assignment_ms.Migrations
                     AssignmentStoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     AssignmentId = table.Column<int>(type: "int", nullable: false),
-                    StorytId = table.Column<int>(type: "int", nullable: false),
+                    StoryId = table.Column<int>(type: "int", nullable: false),
                     StoryTitle = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -70,6 +70,56 @@ namespace iread_assignment_ms.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Question",
+                columns: table => new
+                {
+                    QuestionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    AssignmentId = table.Column<int>(type: "int", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    RightChoiceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Question", x => x.QuestionId);
+                    table.ForeignKey(
+                        name: "FK_Question_Assignments_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignments",
+                        principalColumn: "AssignmentId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Choice",
+                columns: table => new
+                {
+                    ChoiceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    QuestionId = table.Column<int>(type: "int", nullable: true),
+                    MultiChoiceQuestionId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Choice", x => x.ChoiceId);
+                    table.ForeignKey(
+                        name: "FK_Choice_Question_MultiChoiceQuestionId",
+                        column: x => x.MultiChoiceQuestionId,
+                        principalTable: "Question",
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Choice_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AssignmentStatus_AssignmentId",
                 table: "AssignmentStatus",
@@ -79,10 +129,50 @@ namespace iread_assignment_ms.Migrations
                 name: "IX_AssignmentStory_AssignmentId",
                 table: "AssignmentStory",
                 column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Choice_MultiChoiceQuestionId",
+                table: "Choice",
+                column: "MultiChoiceQuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Choice_QuestionId",
+                table: "Choice",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Question_AssignmentId",
+                table: "Question",
+                column: "AssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Question_RightChoiceId",
+                table: "Question",
+                column: "RightChoiceId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Question_Choice_RightChoiceId",
+                table: "Question",
+                column: "RightChoiceId",
+                principalTable: "Choice",
+                principalColumn: "ChoiceId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Question_Assignments_AssignmentId",
+                table: "Question");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Choice_Question_MultiChoiceQuestionId",
+                table: "Choice");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Choice_Question_QuestionId",
+                table: "Choice");
+
             migrationBuilder.DropTable(
                 name: "AssignmentStatus");
 
@@ -91,6 +181,12 @@ namespace iread_assignment_ms.Migrations
 
             migrationBuilder.DropTable(
                 name: "Assignments");
+
+            migrationBuilder.DropTable(
+                name: "Question");
+
+            migrationBuilder.DropTable(
+                name: "Choice");
         }
     }
 }

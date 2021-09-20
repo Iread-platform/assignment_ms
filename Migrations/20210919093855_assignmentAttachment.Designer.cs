@@ -2,60 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210919093855_assignmentAttachment")]
+    partial class assignmentAttachment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.5");
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Answer", b =>
-                {
-                    b.Property<int>("AnswerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsAnswered")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StudentFirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("StudentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StudentLastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("AnswerId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("Answer");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Answer");
-                });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>
                 {
@@ -220,39 +182,6 @@ namespace iread_assignment_ms.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Question");
                 });
 
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
-                {
-                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Answer");
-
-                    b.Property<int?>("EssayQuestionQuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.HasIndex("EssayQuestionQuestionId");
-
-                    b.HasDiscriminator().HasValue("EssayAnswer");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
-                {
-                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasDiscriminator().HasValue("EssayQuestion");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", b =>
-                {
-                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasDiscriminator().HasValue("InteractionQuestion");
-                });
-
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
@@ -267,17 +196,6 @@ namespace iread_assignment_ms.Migrations
                     b.HasDiscriminator().HasValue("MultiChoice");
                 });
 
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Answer", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentAttachment", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
@@ -287,7 +205,6 @@ namespace iread_assignment_ms.Migrations
                         .IsRequired();
 
                     b.Navigation("Assignment");
-
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStatus", b =>
@@ -325,35 +242,6 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("MultiChoice");
                 });
 
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", null)
-                        .WithMany("EssayAnswers")
-                        .HasForeignKey("EssayQuestionQuestionId");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany("EssayQuestions")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignment");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany("InteractionQuestions")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignment");
-                });
-
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
@@ -376,20 +264,10 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("AssignmentStatuses");
 
                     b.Navigation("Attachments");
-                    b.Navigation("EssayQuestions");
-
-
-                    b.Navigation("InteractionQuestions");
-
 
                     b.Navigation("MultiChoices");
 
                     b.Navigation("Stories");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
-                {
-                    b.Navigation("EssayAnswers");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>

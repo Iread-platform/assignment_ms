@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using iread_assignment_ms.DataAccess.Data.Entity;
+using iread_assignment_ms.Web.Dto.AttachmentDto;
 
 namespace iread_assignment_ms.Web.Dto.AssignmentDTO
 {
@@ -17,7 +18,7 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherLastName { get; set; }
         public List<AssignmentStoryIdDto> Stories { get; set; }
 
-
+        public List<AttachmentIdDto> Attachments { get; set; }
 
     }
 }

@@ -3,6 +3,8 @@ using iread_assignment_ms.Web.Dto;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
+using iread_assignment_ms.Web.Dto.EssayQuestion;
+using iread_assignment_ms.Web.Dto.Interaction;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.StoryDto;
 using iread_assignment_ms.Web.DTO.StoryDto;
@@ -14,6 +16,7 @@ namespace iread_assignment_ms.Web.Profile
         public AutoMapperProfile()
         {
             CreateMap<Assignment, AssignmentDto>().ReverseMap();
+            CreateMap<Assignment, InnerAssignmentDto>().ReverseMap();
             CreateMap<Assignment, AssignmentWithStoryIdDto>().ReverseMap();
 
             CreateMap<AssignmentCreateDto, Assignment>().ReverseMap();
@@ -34,6 +37,12 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<ChoiceCreateDto, Choice>();
             CreateMap<Choice, ChoiceDto>();
             CreateMap<MultiChoice, MultiChoiceDto>();
+
+            CreateMap<EssayQuestionCreateDto, EssayQuestion>();
+            CreateMap<EssayQuestion, EssayQuestionDto>();
+
+            CreateMap<InteractionQuestionCreateDto, InteractionQuestion>();
+            CreateMap<InteractionQuestion, InteractionQuestionDto>();
 
             CreateMap<StoryDto, AssignmentStory>();
 

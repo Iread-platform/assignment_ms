@@ -26,8 +26,9 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public List<AssignmentStory> Stories { get; set; }
         public List<AssignmentStatus> AssignmentStatuses { get; set; }
         public List<MultiChoice> MultiChoices { get; set; }
-        
         public List<AssignmentAttachment> Attachments { get; set; }
-
+        public List<EssayQuestion> EssayQuestions { get; set; }
+        public List<InteractionQuestion> InteractionQuestions { get; set; }
+        
     }
 }

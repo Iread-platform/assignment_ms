@@ -33,5 +33,8 @@ namespace iread_assignment_ms.DataAccess.Data
         public DbSet<MultiChoice> MultiChoice { set; get; }
         public DbSet<AssignmentAttachment> AssignmentAttachments { set; get; }
         
+        public DbSet<EssayQuestion> EssayQuestion { set; get; }
+        public DbSet<InteractionQuestion> InteractionQuestion { set; get; }
+        
     }
 }

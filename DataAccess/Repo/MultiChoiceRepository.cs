@@ -52,7 +52,7 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public bool Exists(int id)
         {
-            return _context.MultiChoice.Any(r => r.AssignmentId == id);
+            return _context.MultiChoice.Any(r => r.QuestionId == id);
         }
 
     }

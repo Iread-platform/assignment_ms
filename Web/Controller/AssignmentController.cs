@@ -20,7 +20,8 @@ using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
-
+using iread_assignment_ms.Web.Dto.EssayQuestion;
+using iread_assignment_ms.Web.Dto.Interaction;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -31,17 +32,22 @@ namespace iread_assignment_ms.Web.Controller
         private readonly IMapper _mapper;
         private readonly AssignmentService _assignmentService;
         private readonly MultiChoiceService _multiChoiceService;
-
+        private readonly EssayQuestionService _essayQuestionService;
+        private readonly InteractionQuestionService _interactionQuestionService;
         private readonly IConsulHttpClientService _consulHttpClient;
 
         public AssignmentController(AssignmentService assignmentService,
         MultiChoiceService multiChoiceService,
+        EssayQuestionService essayQuestionService,
+        InteractionQuestionService interactionQuestionService,
          IMapper mapper, IConsulHttpClientService consulHttpClient)
         {
             _assignmentService = assignmentService;
             _mapper = mapper;
             _consulHttpClient = consulHttpClient;
             _multiChoiceService = multiChoiceService;
+            _essayQuestionService = essayQuestionService;
+            _interactionQuestionService = interactionQuestionService;
         }
 
         // GET: api/Assignment/get/1
@@ -101,7 +107,7 @@ namespace iread_assignment_ms.Web.Controller
         [HttpPost("{id}/add-multi-choice-question")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult InsertQuestion([FromRoute] int id,
+        public IActionResult InsertMultiChoiceQuestion([FromRoute] int id,
         [FromBody] MultiChoiceCreateDto multiChoice)
         {
             // check if the assignment exist
@@ -126,6 +132,70 @@ namespace iread_assignment_ms.Web.Controller
             return Ok(multiChoiceEntity);
         }
 
+        //POST: api/Assignment/3/add-essay-question
+        [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
+        [HttpPost("{id}/add-essay-question")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult InsertEssayQuestion([FromRoute] int id,
+        [FromBody] EssayQuestionCreateDto essayQuestion)
+        {
+            // check if the assignment exist
+            Assignment assignmentEntity = _assignmentService.GetById(id).GetAwaiter().GetResult();
+            if (assignmentEntity == null)
+            {
+                ModelState.AddModelError("Id", "Assignment not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            // check if the teacher the owner of this assignment
+            CheckAssignment(assignmentEntity);
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            EssayQuestion essayQuestionEntity = _mapper.Map<EssayQuestion>(essayQuestion);
+            essayQuestionEntity.AssignmentId = id;
+            essayQuestionEntity.Type = QuestionType.EssayQuestion.ToString();
+            _essayQuestionService.Insert(essayQuestionEntity);
+
+            return Ok(_mapper.Map<EssayQuestionDto>(essayQuestionEntity));
+        }
+
+
+        //POST: api/Assignment/3/add-essay-question
+        [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
+        [HttpPost("{id}/add-interaction-question")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult InsertInteractionQuestion([FromRoute] int id,
+        [FromBody] InteractionQuestionCreateDto interactionQuestion)
+        {
+            // check if the assignment exist
+            Assignment assignmentEntity = _assignmentService.GetById(id).GetAwaiter().GetResult();
+            if (assignmentEntity == null)
+            {
+                ModelState.AddModelError("Id", "Assignment not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            // check if the teacher the owner of this assignment
+            CheckAssignment(assignmentEntity);
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            InteractionQuestion interactionQuestionEntity = _mapper.Map<InteractionQuestion>(interactionQuestion);
+            interactionQuestionEntity.AssignmentId = id;
+            interactionQuestionEntity.Type = QuestionType.Interaction.ToString();
+            _interactionQuestionService.Insert(interactionQuestionEntity);
+
+            return Ok(_mapper.Map<InteractionQuestionDto>(interactionQuestionEntity));
+        }
 
         //POST: api/Assignment/add
         [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
@@ -285,12 +355,7 @@ namespace iread_assignment_ms.Web.Controller
         private void CheckAddMultiChoicesValidation(MultiChoiceCreateDto multiChoice, Assignment assignmentEntity)
         {
             // check if the teacher the owner of this assignment
-            string teacherId = User.Claims.Where(c => c.Type == "sub")
-                .Select(c => c.Value).SingleOrDefault();
-            if (assignmentEntity.TeacherId != teacherId)
-            {
-                ModelState.AddModelError("TeacherId", "Assignment is not yours");
-            }
+            CheckAssignment(assignmentEntity);
 
             // check if the choices not empty and more than one
             if (multiChoice.Choices.Count < 2)
@@ -305,5 +370,17 @@ namespace iread_assignment_ms.Web.Controller
             }
 
         }
+
+        private void CheckAssignment(Assignment assignment)
+        {
+            // check if the teacher the owner of this assignment
+            string teacherId = User.Claims.Where(c => c.Type == "sub")
+                .Select(c => c.Value).SingleOrDefault();
+            if (assignment.TeacherId != teacherId)
+            {
+                ModelState.AddModelError("TeacherId", "Assignment is not yours");
+            }
+        }
+
     }
 }

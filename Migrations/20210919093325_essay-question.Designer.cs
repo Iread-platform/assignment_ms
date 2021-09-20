@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210919093325_essay-question")]
+    partial class essayquestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,25 +50,6 @@ namespace iread_assignment_ms.Migrations
                     b.HasKey("AssignmentId");
 
                     b.ToTable("Assignments");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentAttachment", b =>
-                {
-                    b.Property<int>("AssignmentAttachmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("AssignmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AttachmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AssignmentAttachmentId");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.ToTable("AssignmentAttachments");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStatus", b =>
@@ -189,15 +172,6 @@ namespace iread_assignment_ms.Migrations
                     b.HasDiscriminator().HasValue("EssayQuestion");
                 });
 
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", b =>
-                {
-                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
-
-                    b.HasIndex("AssignmentId");
-
-                    b.HasDiscriminator().HasValue("InteractionQuestion");
-                });
-
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>
                 {
                     b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Question");
@@ -210,17 +184,6 @@ namespace iread_assignment_ms.Migrations
                     b.HasIndex("RightChoiceId");
 
                     b.HasDiscriminator().HasValue("MultiChoice");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentAttachment", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany("Attachments")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignment");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.AssignmentStatus", b =>
@@ -261,17 +224,6 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
-                        .WithMany("EssayQuestions")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignment");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Assignment", "Assignment")
                         .WithMany()
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -300,9 +252,7 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>
                 {
                     b.Navigation("AssignmentStatuses");
-                    
-                    b.Navigation("Attachments");
-                    b.Navigation("EssayQuestions");
+
                     b.Navigation("MultiChoices");
 
                     b.Navigation("Stories");

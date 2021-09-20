@@ -12,6 +12,7 @@ namespace iread_assignment_ms.DataAccess
         private IMultiChoiceRepository _multiChoiceRepository;
         private IEssayQuestionRepository _essayQuestionRepository;
         private IInteractionQuestionRepository _interactionQuestionRepository;
+        private IEssayAnswerRepository _essayAnswerRepository;
 
 
 
@@ -59,6 +60,13 @@ namespace iread_assignment_ms.DataAccess
 
         }
 
+        public IEssayAnswerRepository GetEssayAnswerRepository
+        {
+            get
+            {
+                return _essayAnswerRepository ??= new EssayAnswerRepository(_context, _mapper);
+            }
 
+        }
     }
 }

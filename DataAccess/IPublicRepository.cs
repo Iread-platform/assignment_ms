@@ -12,5 +12,8 @@ namespace iread_assignment_ms.DataAccess
 
         IInteractionQuestionRepository GetInteractionQuestionRepository { get; }
 
+        IEssayAnswerRepository GetEssayAnswerRepository { get; }
+
+
     }
 }

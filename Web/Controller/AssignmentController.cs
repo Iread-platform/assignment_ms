@@ -117,13 +117,14 @@ namespace iread_assignment_ms.Web.Controller
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            CheckAddMultiChoicesValiadtion(multiChoice, assignmentEntity);
+            MultiChoice multiChoiceEntity = _mapper.Map<MultiChoice>(multiChoice);
+            CheckAddMultiChoicesValiadtion(multiChoice, multiChoiceEntity, assignmentEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            MultiChoice multiChoiceEntity = _mapper.Map<MultiChoice>(multiChoice);
+
             multiChoiceEntity.AssignmentId = id;
             multiChoiceEntity.Type = QuestionType.MultiChoice.ToString();
             _multiChoiceService.Insert(multiChoiceEntity, multiChoice.RightChoiceIndex);
@@ -147,15 +148,15 @@ namespace iread_assignment_ms.Web.Controller
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            // check if the teacher the owner of this assignment
-            CheckAssignment(assignmentEntity);
+            EssayQuestion essayQuestionEntity = _mapper.Map<EssayQuestion>(essayQuestion);
 
+            // check if the teacher the owner of this assignment
+            CheckAddEssayQuestionValiadtion(assignmentEntity, essayQuestionEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            EssayQuestion essayQuestionEntity = _mapper.Map<EssayQuestion>(essayQuestion);
             essayQuestionEntity.AssignmentId = id;
             essayQuestionEntity.Type = QuestionType.EssayQuestion.ToString();
             _essayQuestionService.Insert(essayQuestionEntity);
@@ -211,7 +212,7 @@ namespace iread_assignment_ms.Web.Controller
 
             Assignment assignmentEntity = _mapper.Map<Assignment>(assignment);
 
-            CheckAddValiadtion(assignment, assignmentEntity);
+            CheckAddValidation(assignment, assignmentEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
@@ -231,7 +232,7 @@ namespace iread_assignment_ms.Web.Controller
 
         }
 
-        private void CheckAddValiadtion(AssignmentCreateDto assignment, Assignment assignmentEntity)
+        private void CheckAddValidation(AssignmentCreateDto assignment, Assignment assignmentEntity)
         {
             //check class id if exists
             ClassDto classDto = _consulHttpClient.GetAsync<ClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
@@ -312,21 +313,21 @@ namespace iread_assignment_ms.Web.Controller
 
         }
 
-        private void CheckAddMultiChoicesValiadtion(MultiChoiceCreateDto multiChoice, Assignment assignmentEntity)
+        private void CheckAddMultiChoicesValiadtion(MultiChoiceCreateDto multiChoiceDto, MultiChoice multiChoiceEntity, Assignment assignmentEntity)
         {
             // check if the teacher the owner of this assignment
             CheckAssignment(assignmentEntity);
 
             // check if the choices not empty and more than one
-            if (multiChoice.Choices.Count < 2)
+            if (multiChoiceDto.Choices.Count < 2)
             {
                 ModelState.AddModelError("Choices", "Choices should be at least 2 options");
             }
 
             // check if the index of right choice valid
-            if (!(multiChoice.RightChoiceIndex > -1 && multiChoice.RightChoiceIndex < multiChoice.Choices.Count))
+            if (!(multiChoiceDto.RightChoiceIndex > -1 && multiChoiceDto.RightChoiceIndex < multiChoiceDto.Choices.Count))
             {
-                ModelState.AddModelError("RightChoiceIndex", $"RightChoiceIndex should be from [0] to [{multiChoice.Choices.Count - 1}]");
+                ModelState.AddModelError("RightChoiceIndex", $"RightChoiceIndex should be from [0] to [{multiChoiceDto.Choices.Count - 1}]");
             }
 
         }
@@ -340,6 +341,31 @@ namespace iread_assignment_ms.Web.Controller
             {
                 ModelState.AddModelError("TeacherId", "Assignment is not yours");
             }
+        }
+
+        private void CheckAddEssayQuestionValiadtion(Assignment assignmentEntity, EssayQuestion essayQuestion)
+        {
+            // check if the teacher the owner of this assignment
+            CheckAssignment(assignmentEntity);
+
+            // create empty answers for each student
+            essayQuestion.EssayAnswers = new List<EssayAnswer>();
+
+            // get student of class to create empty answer foreach one
+            assignmentEntity.AssignmentStatuses.ForEach(m =>
+                {
+                    essayQuestion.EssayAnswers.Add(
+                          new EssayAnswer()
+                          {
+                              Question = essayQuestion,
+                              Type = QuestionType.EssayQuestion.ToString(),
+                              StudentId = m.StudentId,
+                              StudentFirstName = m.StudentFirstName,
+                              StudentLastName = m.StudentLastName
+                          }
+                      );
+                }
+                );
         }
 
     }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210920105704_answer-essay-foreign")]
+    partial class answeressayforeign
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,21 +29,11 @@ namespace iread_assignment_ms.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsAnswered")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("QuestionId")
+                    b.Property<int?>("QuestionId")
+                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("StudentFirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("StudentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StudentLastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Type")
@@ -205,11 +197,19 @@ namespace iread_assignment_ms.Migrations
                 {
                     b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Answer");
 
+                    b.Property<int?>("EssayAnswerAnswerId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("EssayQuestionQuestionId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAnswered")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Text")
                         .HasColumnType("text");
+
+                    b.HasIndex("EssayAnswerAnswerId");
 
                     b.HasIndex("EssayQuestionQuestionId");
 
@@ -296,6 +296,10 @@ namespace iread_assignment_ms.Migrations
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
                 {
+                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", null)
+                        .WithMany("EssayAnswers")
+                        .HasForeignKey("EssayAnswerAnswerId");
+
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", null)
                         .WithMany("EssayAnswers")
                         .HasForeignKey("EssayQuestionQuestionId");
@@ -351,6 +355,11 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("MultiChoices");
 
                     b.Navigation("Stories");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
+                {
+                    b.Navigation("EssayAnswers");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>

@@ -31,7 +31,15 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AttachmentIdDto , AssignmentAttachment>()
                 .ForMember(dest => dest.AttachmentId,
                     opt => opt.MapFrom(src => src.Id));
+            
+            CreateMap<AssignmentAttachment , AttachmentIdDto>()
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.AttachmentId));
+            
+            CreateMap<AttachmentIdDto  , AttachmentDto>();
+            
             CreateMap<AssignmentAttachment , AttachmentWithoutAssignmentDto>();
+            
 
             CreateMap<MultiChoiceCreateDto, MultiChoice>();
             CreateMap<ChoiceCreateDto, Choice>();

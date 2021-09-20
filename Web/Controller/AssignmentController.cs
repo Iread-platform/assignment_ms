@@ -78,21 +78,41 @@ namespace iread_assignment_ms.Web.Controller
               .Select(c => c.Value).SingleOrDefault(); ;
 
             List<AssignmentWithStoryIdDto> assignments = await _assignmentService.GetByStudent(myId);
-            List<AssignmentWithStoryDto> assignmentWithStoryDto = new List<AssignmentWithStoryDto>();
+
+            List<AssignmentWithStoryDto> assignmentWithStoryDto =
+                _mapper.Map<List<AssignmentWithStoryDto>>(assignments);
 
 
             List<FullStoryDto> fullStories = new List<FullStoryDto>();
-            foreach (var assignment in assignments)
+            foreach (var assignment in assignmentWithStoryDto)
             {
+                if (assignment.Attachments != null)
+                {
+                    string attachmentIds = "";
+               
+                    assignment.Attachments.ForEach(r =>
+                    {
+                        attachmentIds += r.Id + ",";
+                    });
+
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    Dictionary<string, string> formData = new Dictionary<string, string>();
+                    formData.Add("ids", attachmentIds);
+                    List<AttachmentDto> res = new List<AttachmentDto>();
+                    res = _consulHttpClient.PostFormAsync<List<AttachmentDto>>("attachment_ms", $"/api/Attachment/get-by-ids", formData, res).GetAwaiter().GetResult();
+
+                    assignment.Attachments = new List<AttachmentDto>();
+                    assignment.Attachments.AddRange(res);
+                }
+                
                 foreach (var story in assignment.Stories)
                 {
                     FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
                     fullStories.Add(fullStoryDto);
                 }
-                AssignmentWithStoryDto assignmentWithStoryDtoSingle = _mapper.Map<AssignmentWithStoryDto>(assignment);
-                assignmentWithStoryDtoSingle.Stories = fullStories;
 
-                assignmentWithStoryDto.Add(assignmentWithStoryDtoSingle);
+                assignment.Stories = new List<FullStoryDto>();
+                assignment.Stories.AddRange(fullStories);
                 fullStories = new List<FullStoryDto>();
             }
 

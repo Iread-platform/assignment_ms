@@ -57,6 +57,8 @@ namespace iread_assignment_ms.Web.Profile
 
             CreateMap<EssayQuestionCreateDto, EssayQuestion>();
             CreateMap<EssayQuestion, EssayQuestionDto>();
+            CreateMap<EssayAnswer, EssayAnswerDto>();
+
 
             CreateMap<InteractionQuestionCreateDto, InteractionQuestion>();
             CreateMap<InteractionQuestion, InteractionQuestionDto>();

@@ -29,6 +29,7 @@ namespace iread_assignment_ms.DataAccess.Repo
             .ThenInclude(m => m.Choices)
             .Include(a => a.EssayQuestions)
             .Include(a => a.InteractionQuestions)
+            .Include(a => a.AssignmentStatuses)
             .Include(a => a.Attachments)
             .Include(a => a.Stories)
             .Where(a => a.AssignmentId == id).SingleOrDefaultAsync();
@@ -77,7 +78,7 @@ namespace iread_assignment_ms.DataAccess.Repo
                         {
                             AssignmentId = r.AssignmentId,
                             Stories = r.Stories != null && r.Stories.Count > 0 ? _mapper.Map<List<AssignmentStoryIdDto>>(r.Stories) : null,
-                            Attachments = r.Attachments != null && r.Attachments.Count >0 ? _mapper.Map<List<AttachmentIdDto>>(r.Attachments) : null,
+                            Attachments = r.Attachments != null && r.Attachments.Count > 0 ? _mapper.Map<List<AttachmentIdDto>>(r.Attachments) : null,
                             ClassId = r.ClassId,
                             TeacherFirstName = r.TeacherFirstName,
                             TeacherLastName = r.TeacherLastName,

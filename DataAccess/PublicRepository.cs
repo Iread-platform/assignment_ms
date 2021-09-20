@@ -13,6 +13,10 @@ namespace iread_assignment_ms.DataAccess
         private IAttachmentRepository _attachmentRepository;
         private IEssayQuestionRepository _essayQuestionRepository;
         private IInteractionQuestionRepository _interactionQuestionRepository;
+        private IEssayAnswerRepository _essayAnswerRepository;
+
+
+
         private readonly IMapper _mapper;
 
 
@@ -66,5 +70,13 @@ namespace iread_assignment_ms.DataAccess
 
         }
 
+        public IEssayAnswerRepository GetEssayAnswerRepository
+        {
+            get
+            {
+                return _essayAnswerRepository ??= new EssayAnswerRepository(_context, _mapper);
+            }
+
+        }
     }
 }

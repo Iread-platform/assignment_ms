@@ -18,6 +18,7 @@ using iread_assignment_ms.DataAccess.Data.Entity.Type;
 using iread_assignment_ms.DataAccess.Data.Type;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
+using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
 using iread_assignment_ms.Web.Dto.EssayQuestion;
 using iread_assignment_ms.Web.Dto.Interaction;
@@ -56,13 +57,46 @@ namespace iread_assignment_ms.Web.Controller
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             Assignment assignment = await _assignmentService.GetById(id);
-
+            
             if (assignment == null)
             {
                 return NotFound();
             }
+            
+            List<FullStoryDto> fullStories = new List<FullStoryDto>();
 
-            return Ok(_mapper.Map<AssignmentDto>(assignment));
+            AssignmentWithStoryDto assignmentWithStoryDto = _mapper.Map<AssignmentWithStoryDto>(assignment);
+            
+            if (assignmentWithStoryDto.Attachments != null)
+            {
+                string attachmentIds = "";
+               
+                assignmentWithStoryDto.Attachments.ForEach(r =>
+                {
+                    attachmentIds += r.Id + ",";
+                });
+
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                Dictionary<string, string> formData = new Dictionary<string, string>();
+                formData.Add("ids", attachmentIds);
+                List<AttachmentDto> res = new List<AttachmentDto>();
+                res = _consulHttpClient.PostFormAsync<List<AttachmentDto>>("attachment_ms", $"/api/Attachment/get-by-ids", formData, res).GetAwaiter().GetResult();
+
+                assignmentWithStoryDto.Attachments = new List<AttachmentDto>();
+                assignmentWithStoryDto.Attachments.AddRange(res);
+            }
+                
+            foreach (var story in assignmentWithStoryDto.Stories)
+            {
+                FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
+                fullStories.Add(fullStoryDto);
+            }
+
+            assignmentWithStoryDto.Stories = new List<FullStoryDto>();
+            assignmentWithStoryDto.Stories.AddRange(fullStories);
+            fullStories = new List<FullStoryDto>();
+
+            return Ok(assignmentWithStoryDto);
         }
 
 
@@ -77,21 +111,41 @@ namespace iread_assignment_ms.Web.Controller
               .Select(c => c.Value).SingleOrDefault(); ;
 
             List<AssignmentWithStoryIdDto> assignments = await _assignmentService.GetByStudent(myId);
-            List<AssignmentWithStoryDto> assignmentWithStoryDto = new List<AssignmentWithStoryDto>();
+
+            List<AssignmentWithStoryDto> assignmentWithStoryDto =
+                _mapper.Map<List<AssignmentWithStoryDto>>(assignments);
 
 
             List<FullStoryDto> fullStories = new List<FullStoryDto>();
-            foreach (var assignment in assignments)
+            foreach (var assignment in assignmentWithStoryDto)
             {
+                if (assignment.Attachments != null)
+                {
+                    string attachmentIds = "";
+               
+                    assignment.Attachments.ForEach(r =>
+                    {
+                        attachmentIds += r.Id + ",";
+                    });
+
+                    attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                    Dictionary<string, string> formData = new Dictionary<string, string>();
+                    formData.Add("ids", attachmentIds);
+                    List<AttachmentDto> res = new List<AttachmentDto>();
+                    res = _consulHttpClient.PostFormAsync<List<AttachmentDto>>("attachment_ms", $"/api/Attachment/get-by-ids", formData, res).GetAwaiter().GetResult();
+
+                    assignment.Attachments = new List<AttachmentDto>();
+                    assignment.Attachments.AddRange(res);
+                }
+                
                 foreach (var story in assignment.Stories)
                 {
                     FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
                     fullStories.Add(fullStoryDto);
                 }
-                AssignmentWithStoryDto assignmentWithStoryDtoSingle = _mapper.Map<AssignmentWithStoryDto>(assignment);
-                assignmentWithStoryDtoSingle.Stories = fullStories;
 
-                assignmentWithStoryDto.Add(assignmentWithStoryDtoSingle);
+                assignment.Stories = new List<FullStoryDto>();
+                assignment.Stories.AddRange(fullStories);
                 fullStories = new List<FullStoryDto>();
             }
 
@@ -117,7 +171,7 @@ namespace iread_assignment_ms.Web.Controller
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            CheckAddMultiChoicesValiadtion(multiChoice, assignmentEntity);
+            CheckAddMultiChoicesValidation(multiChoice, assignmentEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
@@ -211,7 +265,7 @@ namespace iread_assignment_ms.Web.Controller
 
             Assignment assignmentEntity = _mapper.Map<Assignment>(assignment);
 
-            CheckAddValiadtion(assignment, assignmentEntity);
+            CheckAddValidation(assignment, assignmentEntity);
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
@@ -231,7 +285,7 @@ namespace iread_assignment_ms.Web.Controller
 
         }
 
-        private void CheckAddValiadtion(AssignmentCreateDto assignment, Assignment assignmentEntity)
+        private void CheckAddValidation(AssignmentCreateDto assignment, Assignment assignmentEntity)
         {
             //check class id if exists
             ClassDto classDto = _consulHttpClient.GetAsync<ClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
@@ -284,7 +338,7 @@ namespace iread_assignment_ms.Web.Controller
             Dictionary<string, string> formData = new Dictionary<string, string>();
             formData.Add("ids", storyIds);
             List<ViewStoryDto> res = new List<ViewStoryDto>();
-            res = _consulHttpClient.PostFormAsync<List<ViewStoryDto>>("story_ms", $"/api/Story/get-by-ids", formData, res).Result;
+            res = _consulHttpClient.PostFormAsync<List<ViewStoryDto>>("story_ms", $"/api/Story/get-by-ids", formData, res).GetAwaiter().GetResult();
 
             if (res == null || res.Count == 0)
             {
@@ -309,10 +363,49 @@ namespace iread_assignment_ms.Web.Controller
                         });
                 }
             }
+            
+            //check attachment's ids if exist
+            string attachmentIds = "";
+            if (assignment.Attachments != null && assignment.Attachments.Count > 0)
+            {
+                assignment.Attachments.ForEach(a =>
+                {
+                    attachmentIds += a.Id + ",";
+                });
 
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                Dictionary<string, string> attachmentFormData = new Dictionary<string, string>();
+                attachmentFormData.Add("ids", attachmentIds);
+                List<AttachmentIdDto> attachment = new List<AttachmentIdDto>();
+                attachment = _consulHttpClient.PostFormAsync<List<AttachmentIdDto>>("attachment_ms", $"/api/Attachment/get-by-ids", attachmentFormData, attachment).GetAwaiter().GetResult();
+
+                if (attachment == null || attachment.Count == 0)
+                {
+                    ModelState.AddModelError("Attachment", "Attachments not found");
+                    return;
+                }
+                assignmentEntity.Attachments = new List<AssignmentAttachment>();
+                for (int index = 0; index < assignment.Attachments.Count; index++)
+                {
+
+                    if (attachment.ElementAt(index) == null)
+                    {
+                        ModelState.AddModelError("Attachment", $"Attachment with id = {assignment.Attachments.ElementAt(index).Id} not found");
+                    }
+                    else
+                    {
+                        assignmentEntity.Attachments.Add(
+                            new AssignmentAttachment()
+                            {
+                                AttachmentId = attachment.ElementAt(index).Id,
+                                AssignmentId = assignmentEntity.AssignmentId,
+                            });
+                    }
+                }
+            }
         }
 
-        private void CheckAddMultiChoicesValiadtion(MultiChoiceCreateDto multiChoice, Assignment assignmentEntity)
+        private void CheckAddMultiChoicesValidation(MultiChoiceCreateDto multiChoice, Assignment assignmentEntity)
         {
             // check if the teacher the owner of this assignment
             CheckAssignment(assignmentEntity);

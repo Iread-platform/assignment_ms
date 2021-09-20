@@ -5,6 +5,7 @@ using AutoMapper;
 using iread_assignment_ms.DataAccess.Data;
 using iread_assignment_ms.DataAccess.Data.Entity;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
+using iread_assignment_ms.Web.Dto.AttachmentDto;
 using Microsoft.EntityFrameworkCore;
 
 namespace iread_assignment_ms.DataAccess.Repo
@@ -28,6 +29,8 @@ namespace iread_assignment_ms.DataAccess.Repo
             .ThenInclude(m => m.Choices)
             .Include(a => a.EssayQuestions)
             .Include(a => a.InteractionQuestions)
+            .Include(a => a.Attachments)
+            .Include(a => a.Stories)
             .Where(a => a.AssignmentId == id).SingleOrDefaultAsync();
         }
 
@@ -68,11 +71,13 @@ namespace iread_assignment_ms.DataAccess.Repo
             return await _context.Assignments
                         .Include(s => s.AssignmentStatuses)
                         .Include(s => s.Stories)
+                        .Include(a => a.Attachments)
                         .Where(s => s.AssignmentStatuses.Any(s => s.StudentId == studentId))
                         .Select(r => new AssignmentWithStoryIdDto()
                         {
                             AssignmentId = r.AssignmentId,
                             Stories = r.Stories != null && r.Stories.Count > 0 ? _mapper.Map<List<AssignmentStoryIdDto>>(r.Stories) : null,
+                            Attachments = r.Attachments != null && r.Attachments.Count >0 ? _mapper.Map<List<AttachmentIdDto>>(r.Attachments) : null,
                             ClassId = r.ClassId,
                             TeacherFirstName = r.TeacherFirstName,
                             TeacherLastName = r.TeacherLastName,

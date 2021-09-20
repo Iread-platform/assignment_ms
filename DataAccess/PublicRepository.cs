@@ -10,11 +10,9 @@ namespace iread_assignment_ms.DataAccess
         private readonly AppDbContext _context;
         private IAssignmentRepository _assignmentRepository;
         private IMultiChoiceRepository _multiChoiceRepository;
+        private IAttachmentRepository _attachmentRepository;
         private IEssayQuestionRepository _essayQuestionRepository;
         private IInteractionQuestionRepository _interactionQuestionRepository;
-
-
-
         private readonly IMapper _mapper;
 
 
@@ -41,6 +39,15 @@ namespace iread_assignment_ms.DataAccess
             }
 
         }
+
+        public IAttachmentRepository GetAttachmentRepository
+        {
+            get
+            {
+                return _attachmentRepository ??= new AttachmentRepository(_context);
+            }
+
+        }
         public IEssayQuestionRepository GetEssayQuestionRepository
         {
             get
@@ -58,7 +65,6 @@ namespace iread_assignment_ms.DataAccess
             }
 
         }
-
 
     }
 }

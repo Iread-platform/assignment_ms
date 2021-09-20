@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using iread_assignment_ms.DataAccess.Data.Entity;
 using iread_assignment_ms.Web.Dto.StoryDto;
 
 namespace iread_assignment_ms.Web.Dto.AssignmentDto
@@ -15,5 +16,6 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDto
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
         public List<FullStoryDto> Stories { get; set; }
+        public List<AttachmentDto.AttachmentDto> Attachments { get; set; }
     }
 }

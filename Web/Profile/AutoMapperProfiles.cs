@@ -25,7 +25,9 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AssignmentStoryIdDto, FullStoryDto>().ReverseMap();
             
             //Attachment
-            CreateMap<AttachmentIdDto , AssignmentAttachment>().ReverseMap();
+            CreateMap<AttachmentIdDto , AssignmentAttachment>()
+                .ForMember(dest => dest.AttachmentId,
+                    opt => opt.MapFrom(src => src.Id));
 
 
             CreateMap<MultiChoiceCreateDto, MultiChoice>();

@@ -2,6 +2,6 @@
 {
     public class AttachmentIdDto
     {
-        public int AttachmentId { get; set; }
+        public int Id { get; set; }
     }
 }

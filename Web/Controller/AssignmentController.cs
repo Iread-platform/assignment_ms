@@ -247,7 +247,7 @@ namespace iread_assignment_ms.Web.Controller
             {
                 assignment.Attachments.ForEach(a =>
                 {
-                    attachmentIds += a.AttachmentId + ",";
+                    attachmentIds += a.Id + ",";
                 });
 
                 attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
@@ -267,14 +267,14 @@ namespace iread_assignment_ms.Web.Controller
 
                     if (attachment.ElementAt(index) == null)
                     {
-                        ModelState.AddModelError("Attachment", $"Attachment with id = {assignment.Attachments.ElementAt(index).AttachmentId} not found");
+                        ModelState.AddModelError("Attachment", $"Attachment with id = {assignment.Attachments.ElementAt(index).Id} not found");
                     }
                     else
                     {
                         assignmentEntity.Attachments.Add(
                             new AssignmentAttachment()
                             {
-                                AttachmentId = attachment.ElementAt(index).AttachmentId,
+                                AttachmentId = attachment.ElementAt(index).Id,
                                 AssignmentId = assignmentEntity.AssignmentId,
                             });
                     }

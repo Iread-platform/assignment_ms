@@ -26,6 +26,8 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AssignmentStory, StoryDto>().ReverseMap();
             CreateMap<AssignmentWithStoryIdDto, AssignmentWithStoryDto>().ReverseMap();
             CreateMap<AssignmentStoryIdDto, FullStoryDto>().ReverseMap();
+            CreateMap<Assignment, AssignmentWithStoryDto>().ReverseMap();
+            CreateMap<AssignmentStory ,  FullStoryDto>().ReverseMap();
             
             //Attachment
             CreateMap<AttachmentIdDto , AssignmentAttachment>()
@@ -35,7 +37,14 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AssignmentAttachment , AttachmentIdDto>()
                 .ForMember(dest => dest.Id,
                     opt => opt.MapFrom(src => src.AttachmentId));
-            
+            CreateMap<AssignmentAttachment ,  AttachmentDto>()
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.AttachmentId));
+
+            CreateMap<AttachmentDto ,  AssignmentAttachment>()
+                .ForMember(dest => dest.AttachmentId,
+                    opt => opt.MapFrom(src => src.Id));
+
             CreateMap<AttachmentIdDto  , AttachmentDto>();
             
             CreateMap<AssignmentAttachment , AttachmentWithoutAssignmentDto>();

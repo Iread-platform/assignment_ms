@@ -57,13 +57,46 @@ namespace iread_assignment_ms.Web.Controller
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             Assignment assignment = await _assignmentService.GetById(id);
-
+            
             if (assignment == null)
             {
                 return NotFound();
             }
+            
+            List<FullStoryDto> fullStories = new List<FullStoryDto>();
 
-            return Ok(_mapper.Map<AssignmentDto>(assignment));
+            AssignmentWithStoryDto assignmentWithStoryDto = _mapper.Map<AssignmentWithStoryDto>(assignment);
+            
+            if (assignmentWithStoryDto.Attachments != null)
+            {
+                string attachmentIds = "";
+               
+                assignmentWithStoryDto.Attachments.ForEach(r =>
+                {
+                    attachmentIds += r.Id + ",";
+                });
+
+                attachmentIds = attachmentIds.Remove(attachmentIds.Length - 1);
+                Dictionary<string, string> formData = new Dictionary<string, string>();
+                formData.Add("ids", attachmentIds);
+                List<AttachmentDto> res = new List<AttachmentDto>();
+                res = _consulHttpClient.PostFormAsync<List<AttachmentDto>>("attachment_ms", $"/api/Attachment/get-by-ids", formData, res).GetAwaiter().GetResult();
+
+                assignmentWithStoryDto.Attachments = new List<AttachmentDto>();
+                assignmentWithStoryDto.Attachments.AddRange(res);
+            }
+                
+            foreach (var story in assignmentWithStoryDto.Stories)
+            {
+                FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
+                fullStories.Add(fullStoryDto);
+            }
+
+            assignmentWithStoryDto.Stories = new List<FullStoryDto>();
+            assignmentWithStoryDto.Stories.AddRange(fullStories);
+            fullStories = new List<FullStoryDto>();
+
+            return Ok(assignmentWithStoryDto);
         }
 
 
@@ -333,7 +366,7 @@ namespace iread_assignment_ms.Web.Controller
             
             //check attachment's ids if exist
             string attachmentIds = "";
-            if (assignment.Attachments != null || assignment.Attachments.Count > 0)
+            if (assignment.Attachments != null && assignment.Attachments.Count > 0)
             {
                 assignment.Attachments.ForEach(a =>
                 {

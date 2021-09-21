@@ -67,7 +67,7 @@ namespace iread_assignment_ms.Web.Controller
 
             AssignmentWithStoryDto assignmentWithStoryDto = _mapper.Map<AssignmentWithStoryDto>(assignment);
 
-            if (assignmentWithStoryDto.Attachments != null)
+            if (assignment.Attachments != null && assignment.Attachments.Count > 0)
             {
                 string attachmentIds = "";
 

@@ -9,6 +9,8 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public List<Choice> Choices { get; set; }
         public Nullable<int> RightChoiceId { get; set; }
         public Choice RightChoice { get; set; }
+        public List<MultiChoiceAnswer> MultiChoiceAnswers { get; set; }
+
 
     }
 }

@@ -21,7 +21,10 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public async Task<MultiChoice> GetById(int id)
         {
-            return await _context.MultiChoice.SingleOrDefaultAsync(m => m.QuestionId == id);
+            return await _context.MultiChoice.
+            Include(mc => mc.Choices)
+            .Include(mc => mc.MultiChoiceAnswers)
+            .SingleOrDefaultAsync(m => m.QuestionId == id);
         }
 
         public void Insert(MultiChoice multiChoice)

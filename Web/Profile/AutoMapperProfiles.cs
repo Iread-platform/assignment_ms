@@ -27,33 +27,35 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AssignmentWithStoryIdDto, AssignmentWithStoryDto>().ReverseMap();
             CreateMap<AssignmentStoryIdDto, FullStoryDto>().ReverseMap();
             CreateMap<Assignment, AssignmentWithStoryDto>().ReverseMap();
-            CreateMap<AssignmentStory ,  FullStoryDto>().ReverseMap();
-            
+            CreateMap<AssignmentStory, FullStoryDto>().ReverseMap();
+
             //Attachment
-            CreateMap<AttachmentIdDto , AssignmentAttachment>()
-                .ForMember(dest => dest.AttachmentId,
-                    opt => opt.MapFrom(src => src.Id));
-            
-            CreateMap<AssignmentAttachment , AttachmentIdDto>()
-                .ForMember(dest => dest.Id,
-                    opt => opt.MapFrom(src => src.AttachmentId));
-            CreateMap<AssignmentAttachment ,  AttachmentDto>()
-                .ForMember(dest => dest.Id,
-                    opt => opt.MapFrom(src => src.AttachmentId));
-
-            CreateMap<AttachmentDto ,  AssignmentAttachment>()
+            CreateMap<AttachmentIdDto, AssignmentAttachment>()
                 .ForMember(dest => dest.AttachmentId,
                     opt => opt.MapFrom(src => src.Id));
 
-            CreateMap<AttachmentIdDto  , AttachmentDto>();
-            
-            CreateMap<AssignmentAttachment , AttachmentWithoutAssignmentDto>();
-            
+            CreateMap<AssignmentAttachment, AttachmentIdDto>()
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.AttachmentId));
+            CreateMap<AssignmentAttachment, AttachmentDto>()
+                .ForMember(dest => dest.Id,
+                    opt => opt.MapFrom(src => src.AttachmentId));
+
+            CreateMap<AttachmentDto, AssignmentAttachment>()
+                .ForMember(dest => dest.AttachmentId,
+                    opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<AttachmentIdDto, AttachmentDto>();
+
+            CreateMap<AssignmentAttachment, AttachmentWithoutAssignmentDto>();
+
 
             CreateMap<MultiChoiceCreateDto, MultiChoice>();
             CreateMap<ChoiceCreateDto, Choice>();
             CreateMap<Choice, ChoiceDto>();
             CreateMap<MultiChoice, MultiChoiceDto>();
+            CreateMap<MultiChoiceAnswer, MultiChoiceAnswerDto>();
+
 
             CreateMap<EssayQuestionCreateDto, EssayQuestion>();
             CreateMap<EssayQuestion, EssayQuestionDto>();

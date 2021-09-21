@@ -16,5 +16,7 @@ namespace iread_assignment_ms.DataAccess
 
         IEssayAnswerRepository GetEssayAnswerRepository { get; }
 
+        IMultiChoiceAnswerRepository GetMultiChoiceAnswerRepository { get; }
+
     }
 }

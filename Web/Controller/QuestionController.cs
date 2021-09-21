@@ -40,7 +40,6 @@ namespace iread_assignment_ms.Web.Controller
         }
 
 
-        //POST: api/Assignment/3/add-multi-choice-question
         [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
         [HttpPost("{id}/add-multi-choice-question")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,7 +72,6 @@ namespace iread_assignment_ms.Web.Controller
             return Ok(multiChoiceEntity);
         }
 
-        //POST: api/Assignment/3/add-essay-question
         [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
         [HttpPost("{id}/add-essay-question")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -106,7 +104,6 @@ namespace iread_assignment_ms.Web.Controller
         }
 
 
-        //POST: api/Assignment/3/add-essay-question
         [Authorize(Roles = Policies.Teacher, AuthenticationSchemes = "Bearer")]
         [HttpPost("{id}/add-interaction-question")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -121,16 +118,17 @@ namespace iread_assignment_ms.Web.Controller
                 ModelState.AddModelError("Id", "Assignment not found");
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
+            InteractionQuestion interactionQuestionEntity = _mapper.Map<InteractionQuestion>(interactionQuestion);
+
 
             // check if the teacher the owner of this assignment
-            CheckAssignment(assignmentEntity);
+            CheckAddInteractionQuestionValidation(assignmentEntity, interactionQuestionEntity);
 
             if (ModelState.ErrorCount > 0)
             {
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            InteractionQuestion interactionQuestionEntity = _mapper.Map<InteractionQuestion>(interactionQuestion);
             interactionQuestionEntity.AssignmentId = id;
             interactionQuestionEntity.Type = QuestionType.Interaction.ToString();
             _interactionQuestionService.Insert(interactionQuestionEntity);
@@ -139,7 +137,6 @@ namespace iread_assignment_ms.Web.Controller
         }
 
         private void CheckAddMultiChoicesValidation(MultiChoiceCreateDto multiChoiceDto, MultiChoice multiChoiceEntity, Assignment assignmentEntity)
-
         {
             // check if the teacher the owner of this assignment
             CheckAssignment(assignmentEntity);
@@ -166,6 +163,33 @@ namespace iread_assignment_ms.Web.Controller
                           new MultiChoiceAnswer()
                           {
                               Question = multiChoiceEntity,
+                              Type = QuestionType.MultiChoice.ToString(),
+                              StudentId = m.StudentId,
+                              StudentFirstName = m.StudentFirstName,
+                              StudentLastName = m.StudentLastName
+                          }
+                      );
+                }
+                );
+
+        }
+
+        private void CheckAddInteractionQuestionValidation(Assignment assignmentEntity, InteractionQuestion interactionQuestion)
+
+        {
+            // check if the teacher the owner of this assignment
+            CheckAssignment(assignmentEntity);
+
+            // create empty answers for each student
+            interactionQuestion.InteractionAnswers = new List<InteractionAnswer>();
+
+            // get student of class to create empty answer foreach one
+            assignmentEntity.AssignmentStatuses.ForEach(m =>
+                {
+                    interactionQuestion.InteractionAnswers.Add(
+                          new InteractionAnswer()
+                          {
+                              Question = interactionQuestion,
                               Type = QuestionType.MultiChoice.ToString(),
                               StudentId = m.StudentId,
                               StudentFirstName = m.StudentFirstName,

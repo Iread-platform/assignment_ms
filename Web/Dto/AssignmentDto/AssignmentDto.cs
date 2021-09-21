@@ -18,10 +18,9 @@ namespace iread_assignment_ms.Web.Dto.AssignmentDTO
         public string TeacherId { get; set; }
         public string TeacherFirstName { get; set; }
         public string TeacherLastName { get; set; }
-        public List<MultiChoiceDto> MultiChoices { get; set; }
+
         public List<AttachmentWithoutAssignmentDto> Attachments { get; set; }
-        public List<EssayQuestionDto> EssayQuestions { get; set; }
-        public List<InteractionQuestionDto> InteractionQuestions { get; set; }
+
 
     }
 }

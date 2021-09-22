@@ -55,5 +55,10 @@ namespace iread_assignment_ms.DataAccess.Repo
             return _context.InteractionAnswer.Any(r => r.AnswerId == id);
         }
 
+        public void AddInteractionToAnswer(AnswerInteraction answerInteraction)
+        {
+            _context.AnswerInteraction.Add(answerInteraction);
+            _context.SaveChanges();
+        }
     }
 }

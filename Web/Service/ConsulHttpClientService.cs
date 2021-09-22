@@ -184,7 +184,7 @@ namespace iread_assignment_ms.Web.Service
                 Port = service.Port,
                 Path = uri
             };
-
+            Console.WriteLine(uriBuilder.Uri);
             return uriBuilder.Uri;
         }
 

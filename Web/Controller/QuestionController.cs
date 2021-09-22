@@ -190,7 +190,7 @@ namespace iread_assignment_ms.Web.Controller
                           new InteractionAnswer()
                           {
                               Question = interactionQuestion,
-                              Type = QuestionType.MultiChoice.ToString(),
+                              Type = QuestionType.Interaction.ToString(),
                               StudentId = m.StudentId,
                               StudentFirstName = m.StudentFirstName,
                               StudentLastName = m.StudentLastName

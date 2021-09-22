@@ -29,6 +29,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public List<AssignmentAttachment> Attachments { get; set; }
         public List<EssayQuestion> EssayQuestions { get; set; }
         public List<InteractionQuestion> InteractionQuestions { get; set; }
-        
+
+
     }
 }

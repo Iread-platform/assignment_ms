@@ -21,7 +21,12 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public async Task<InteractionQuestion> GetById(int id)
         {
-            return await _context.InteractionQuestion.SingleOrDefaultAsync(m => m.QuestionId == id);
+            return await _context.InteractionQuestion
+            .Include(iq => iq.Assignment)
+            .ThenInclude(a => a.Stories)
+            .Include(iq => iq.InteractionAnswers)
+            .ThenInclude(i => i.Interactions)
+            .SingleOrDefaultAsync(m => m.QuestionId == id);
         }
 
         public void Insert(InteractionQuestion interactionQuestion)

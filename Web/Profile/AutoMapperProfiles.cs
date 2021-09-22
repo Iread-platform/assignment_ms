@@ -17,16 +17,14 @@ namespace iread_assignment_ms.Web.Profile
         {
             CreateMap<Assignment, AssignmentDto>().ReverseMap();
             CreateMap<Assignment, InnerAssignmentDto>().ReverseMap();
-            CreateMap<Assignment, AssignmentWithStoryIdDto>().ReverseMap();
 
             CreateMap<AssignmentCreateDto, Assignment>().ReverseMap();
 
-            CreateMap<AssignmentStatus, AssignmentStatusDto>().ReverseMap();
-            CreateMap<AssignmentStory, AssignmentStoryIdDto>().ReverseMap();
             CreateMap<AssignmentStory, StoryDto>().ReverseMap();
-            CreateMap<AssignmentWithStoryIdDto, AssignmentWithStoryDto>().ReverseMap();
-            CreateMap<AssignmentStoryIdDto, FullStoryDto>().ReverseMap();
-            CreateMap<Assignment, AssignmentWithStoryDto>().ReverseMap();
+            CreateMap<Assignment, AssignmentWithStoryDto>()
+             .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => src.AssignmentStatuses != null && src.AssignmentStatuses.Count > 0 ? src.AssignmentStatuses[0].Value : null));
+
             CreateMap<AssignmentStory, FullStoryDto>().ReverseMap();
 
             //Attachment

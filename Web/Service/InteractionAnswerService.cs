@@ -38,6 +38,11 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository.GetInteractionAnswerRepository.Update(interactionAnswer);
         }
 
+        internal void AddInteractionToAnswer(AnswerInteraction answerInteraction)
+        {
+            _publicRepository.GetInteractionAnswerRepository.AddInteractionToAnswer(answerInteraction);
+        }
+
         internal void Delete(InteractionAnswer interactionAnswer)
         {
             _publicRepository.GetInteractionAnswerRepository.Delete(interactionAnswer);

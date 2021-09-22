@@ -140,8 +140,13 @@ namespace iread_assignment_ms.Web.Controller
             string myId = User.Claims.Where(c => c.Type == "sub")
                      .Select(c => c.Value).SingleOrDefault();
             InteractionAnswer interactionAnswerEntity = interactionQuestionEntity.InteractionAnswers.Single(ea => ea.StudentId == myId);
-            interactionAnswerEntity.Interactions.Add(new AnswerInteraction() { AnswerInteractionId = interaction.InteractionId });
-            _interactionAnswerService.Update(interactionAnswerEntity);
+
+            _interactionAnswerService.AddInteractionToAnswer(
+                new AnswerInteraction()
+                {
+                    InteractionAnswerId = interactionAnswerEntity.AnswerId,
+                    InteractionId = interaction.InteractionId
+                });
 
             return Ok(_mapper.Map<InteractionAnswerDto>(interactionAnswerEntity));
         }
@@ -149,10 +154,65 @@ namespace iread_assignment_ms.Web.Controller
         private void CheckInteractionAnswer(InteractionQuestion interactionQuestionEntity, AnswerInteractionCreateDto interaction)
         {
 
-            // TODO:
-            // check if the interactions related to any stories of this assignment
+
+            string myId = User.Claims.Where(c => c.Type == "sub")
+                                .Select(c => c.Value).SingleOrDefault();
+
+
+            // check if the interaction exists
+            GeneralInteractionDto res = _consulHttpClient.GetAsync<GeneralInteractionDto>("interaction_ms", $"/api/Interaction/{interaction.InteractionId}/get").GetAwaiter().GetResult();
+            if (res == null || res.InteractionId < 1)
+            {
+                ModelState.AddModelError("Interaction", "No interaction has this id");
+            }
+            else
+            {
+                // if the interaction exists
+                // check if the interaction related to any stories of this assignment
+                if (!interactionQuestionEntity.Assignment.Stories.Exists(s => s.StoryId == res.StoryId))
+                {
+                    ModelState.AddModelError("Interaction", "Interaction no related to any assignment's stories");
+                }
+
+                // check if the interaction related to the student
+
+                if (myId != res.StudentId)
+                {
+                    ModelState.AddModelError("Interaction", "Interaction not yours");
+                }
+
+            }
+
             // check if the student is the owner of this question
-            // check if the student is the owner of this interaction
+            if (interactionQuestionEntity.InteractionAnswers == null || interactionQuestionEntity.InteractionAnswers.Count < 1)
+            {
+                ModelState.AddModelError("Question", "This interaction question not assigned to any student");
+                return;
+            }
+
+            foreach (InteractionAnswer interactionAnswer in interactionQuestionEntity.InteractionAnswers)
+            {
+                if (interactionAnswer.StudentId == myId)
+                {
+                    // if student is the owner of this question 
+                    // check if this question is not answered before
+                    if (interactionAnswer.IsAnswered)
+                    {
+                        ModelState.AddModelError("Question", "Question is answered before");
+                    }
+                    else
+                    {   // if the answer not confirmed (blocked)
+                        // check if this question is not answered using this interaction before
+                        if (interactionAnswer.Interactions.Exists(i => i.InteractionId == interaction.InteractionId))
+                        {
+                            ModelState.AddModelError("Question", "Question is answered before using this interaction");
+                        }
+                    }
+                    return;
+                }
+            }
+            //check if the student isn't the owner of this question
+            ModelState.AddModelError("Question", "Question not yours");
 
         }
 

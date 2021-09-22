@@ -97,16 +97,16 @@ namespace iread_assignment_ms.Web.Controller
             string myId = User.Claims.Where(c => c.Type == "sub")
               .Select(c => c.Value).SingleOrDefault(); ;
 
-            List<AssignmentWithStoryIdDto> assignments = await _assignmentService.GetByStudent(myId);
+            List<Assignment> assignments = await _assignmentService.GetByStudent(myId);
 
-            List<AssignmentWithStoryDto> assignmentWithStoryDto =
+            List<AssignmentWithStoryDto> assignmentsWithStoryDto =
                 _mapper.Map<List<AssignmentWithStoryDto>>(assignments);
 
-
-            List<FullStoryDto> fullStories = new List<FullStoryDto>();
-            foreach (var assignment in assignmentWithStoryDto)
+            // for each assginment
+            foreach (var assignment in assignmentsWithStoryDto)
             {
-                if (assignment.Attachments != null)
+                // get attachments' details
+                if (assignment.Attachments != null && assignment.Attachments.Count > 0)
                 {
                     string attachmentIds = "";
 
@@ -125,18 +125,17 @@ namespace iread_assignment_ms.Web.Controller
                     assignment.Attachments.AddRange(res);
                 }
 
+                // get stories' details
+                List<FullStoryDto> fullStories = new List<FullStoryDto>();
                 foreach (var story in assignment.Stories)
                 {
-                    FullStoryDto fullStoryDto = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
-                    fullStories.Add(fullStoryDto);
+                    FullStoryDto res = _consulHttpClient.GetAsync<FullStoryDto>("story_ms", $"/api/story/get/{story.StoryId}").GetAwaiter().GetResult();
+                    fullStories.Add(res);
                 }
-
-                assignment.Stories = new List<FullStoryDto>();
-                assignment.Stories.AddRange(fullStories);
-                fullStories = new List<FullStoryDto>();
+                assignment.Stories = new List<FullStoryDto>(fullStories);
             }
 
-            return Ok(assignmentWithStoryDto);
+            return Ok(assignmentsWithStoryDto);
         }
 
 

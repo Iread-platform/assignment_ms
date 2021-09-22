@@ -174,7 +174,7 @@ namespace iread_assignment_ms
             services.AddScoped<InteractionQuestionService>();
             services.AddScoped<EssayAnswerService>();
             services.AddScoped<MultiChoiceAnswerService>();
-
+            services.AddScoped<InteractionAnswerService>();
 
         }
 

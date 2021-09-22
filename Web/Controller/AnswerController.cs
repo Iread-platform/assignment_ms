@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using iread_assignment_ms.Web.Dto.EssayQuestion;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using System;
+using iread_assignment_ms.Web.Dto.Interaction;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -20,6 +21,7 @@ namespace iread_assignment_ms.Web.Controller
         private readonly AssignmentService _assignmentService;
         private readonly EssayAnswerService _essayAnswerService;
         private readonly MultiChoiceAnswerService _multiChoiceAnswerService;
+        private readonly InteractionAnswerService _interactionAnswerService;
         private readonly MultiChoiceService _multiChoiceService;
         private readonly EssayQuestionService _essayQuestionService;
         private readonly InteractionQuestionService _interactionQuestionService;
@@ -30,6 +32,7 @@ namespace iread_assignment_ms.Web.Controller
         EssayQuestionService essayQuestionService,
         EssayAnswerService essayAnswerService,
         MultiChoiceService multiChoiceService,
+        InteractionAnswerService interactionAnswerService,
         InteractionQuestionService interactionQuestionService,
          IMapper mapper, IConsulHttpClientService consulHttpClient)
         {
@@ -41,6 +44,7 @@ namespace iread_assignment_ms.Web.Controller
             _multiChoiceService = multiChoiceService;
             _interactionQuestionService = interactionQuestionService;
             _essayAnswerService = essayAnswerService;
+            _interactionAnswerService = interactionAnswerService;
         }
 
 
@@ -108,6 +112,108 @@ namespace iread_assignment_ms.Web.Controller
             _multiChoiceAnswerService.Update(multiChoiceAnswerEntity);
 
             return Ok(_mapper.Map<MultiChoiceAnswerDto>(multiChoiceAnswerEntity));
+        }
+
+
+        //POST: api/Assignment/Question/3/interaction-answer/add
+        [Authorize(Roles = Policies.Student, AuthenticationSchemes = "Bearer")]
+        [HttpPost("{id}/interaction-answer/add")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult InsertInteractionAnswer([FromRoute] int id,
+        [FromBody] AnswerInteractionCreateDto interaction)
+        {
+            // check if the question exist
+            InteractionQuestion interactionQuestionEntity = _interactionQuestionService.GetById(id).GetAwaiter().GetResult();
+            if (interactionQuestionEntity == null)
+            {
+                ModelState.AddModelError("Id", "Question not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            CheckInteractionAnswer(interactionQuestionEntity, interaction);
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            string myId = User.Claims.Where(c => c.Type == "sub")
+                     .Select(c => c.Value).SingleOrDefault();
+            InteractionAnswer interactionAnswerEntity = interactionQuestionEntity.InteractionAnswers.Single(ea => ea.StudentId == myId);
+
+            _interactionAnswerService.AddInteractionToAnswer(
+                new AnswerInteraction()
+                {
+                    InteractionAnswerId = interactionAnswerEntity.AnswerId,
+                    InteractionId = interaction.InteractionId
+                });
+
+            return Ok(_mapper.Map<InteractionAnswerDto>(interactionAnswerEntity));
+        }
+
+        private void CheckInteractionAnswer(InteractionQuestion interactionQuestionEntity, AnswerInteractionCreateDto interaction)
+        {
+
+
+            string myId = User.Claims.Where(c => c.Type == "sub")
+                                .Select(c => c.Value).SingleOrDefault();
+
+
+            // check if the interaction exists
+            GeneralInteractionDto res = _consulHttpClient.GetAsync<GeneralInteractionDto>("interaction_ms", $"/api/Interaction/{interaction.InteractionId}/get").GetAwaiter().GetResult();
+            if (res == null || res.InteractionId < 1)
+            {
+                ModelState.AddModelError("Interaction", "No interaction has this id");
+            }
+            else
+            {
+                // if the interaction exists
+                // check if the interaction related to any stories of this assignment
+                if (!interactionQuestionEntity.Assignment.Stories.Exists(s => s.StoryId == res.StoryId))
+                {
+                    ModelState.AddModelError("Interaction", "Interaction no related to any assignment's stories");
+                }
+
+                // check if the interaction related to the student
+
+                if (myId != res.StudentId)
+                {
+                    ModelState.AddModelError("Interaction", "Interaction not yours");
+                }
+
+            }
+
+            // check if the student is the owner of this question
+            if (interactionQuestionEntity.InteractionAnswers == null || interactionQuestionEntity.InteractionAnswers.Count < 1)
+            {
+                ModelState.AddModelError("Question", "This interaction question not assigned to any student");
+                return;
+            }
+
+            foreach (InteractionAnswer interactionAnswer in interactionQuestionEntity.InteractionAnswers)
+            {
+                if (interactionAnswer.StudentId == myId)
+                {
+                    // if student is the owner of this question 
+                    // check if this question is not answered before
+                    if (interactionAnswer.IsAnswered)
+                    {
+                        ModelState.AddModelError("Question", "Question is answered before");
+                    }
+                    else
+                    {   // if the answer not confirmed (blocked)
+                        // check if this question is not answered using this interaction before
+                        if (interactionAnswer.Interactions.Exists(i => i.InteractionId == interaction.InteractionId))
+                        {
+                            ModelState.AddModelError("Question", "Question is answered before using this interaction");
+                        }
+                    }
+                    return;
+                }
+            }
+            //check if the student isn't the owner of this question
+            ModelState.AddModelError("Question", "Question not yours");
+
         }
 
         private void CheckMultiChoiceAnswer(MultiChoice multiChoiceEntity, MultiChoiceAnswerCreateDto multiChoiceAnswerCreateDto)

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210921123140_interaction-answer")]
+    partial class interactionanswer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,11 +260,6 @@ namespace iread_assignment_ms.Migrations
                 {
                     b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.Answer");
 
-                    b.Property<int?>("InteractionQuestionQuestionId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("InteractionQuestionQuestionId");
-
                     b.HasDiscriminator().HasValue("InteractionAnswer");
                 });
 
@@ -388,13 +385,6 @@ namespace iread_assignment_ms.Migrations
                         .HasForeignKey("EssayQuestionQuestionId");
                 });
 
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionAnswer", b =>
-                {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", null)
-                        .WithMany("InteractionAnswers")
-                        .HasForeignKey("InteractionQuestionQuestionId");
-                });
-
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoiceAnswer", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Choice", "ChosenChoice")
@@ -470,11 +460,6 @@ namespace iread_assignment_ms.Migrations
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
                 {
                     b.Navigation("EssayAnswers");
-                });
-
-            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.InteractionQuestion", b =>
-                {
-                    b.Navigation("InteractionAnswers");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.MultiChoice", b =>

@@ -18,5 +18,8 @@ namespace iread_assignment_ms.DataAccess
 
         IMultiChoiceAnswerRepository GetMultiChoiceAnswerRepository { get; }
 
+        IInteractionAnswerRepository GetInteractionAnswerRepository { get; }
+
+
     }
 }

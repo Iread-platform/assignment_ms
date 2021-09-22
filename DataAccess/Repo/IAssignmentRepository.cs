@@ -18,6 +18,6 @@ namespace iread_assignment_ms.DataAccess.Repo
         public void Update(Assignment assignment, Assignment oldAssignment);
 
         public Task<List<Assignment>> GetByTeacher(string teacherId);
-        public Task<List<AssignmentWithStoryIdDto>> GetByStudent(string myId);
+        public Task<List<Assignment>> GetByStudent(string myId);
     }
 }

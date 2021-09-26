@@ -17,6 +17,7 @@ namespace iread_assignment_ms.Web.Dto.StoryDto
         public int StoryLevel { get; set; }
 
         public string Writer { get; set; }
+        public string Color { get; set; }
 
         public List<TagWithIdDto> KeyWords { get; set; }
 

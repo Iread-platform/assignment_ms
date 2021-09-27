@@ -58,8 +58,8 @@ namespace iread_assignment_ms.Web.Controller
                 return BadRequest(ErrorMessage.ModelStateParser(ModelState));
             }
 
-            FeedBack feedbackEntity = _mapper.Map<FeedBack>(feedBack);
-            feedbackEntity.AnswerId = essayAnswerEntity.AnswerId;
+            EssayFeedBack feedbackEntity = _mapper.Map<EssayFeedBack>(feedBack);
+            feedbackEntity.EssayAnswerId = essayAnswerEntity.AnswerId;
             feedbackEntity.TeacherId = User.Claims.Where(c => c.Type == "sub")
                      .Select(c => c.Value).SingleOrDefault();
 
@@ -70,7 +70,6 @@ namespace iread_assignment_ms.Web.Controller
 
         private void CheckEssayAnswerFeedBack(EssayAnswer essayAnswer)
         {
-
 
             //check if the teacher is the owner of the answer's question
             string myId = User.Claims.Where(c => c.Type == "sub")

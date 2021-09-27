@@ -13,29 +13,29 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository = publicRepository;
         }
 
-        public async Task<FeedBack> GetById(int id)
+        public async Task<EssayFeedBack> GetById(int id)
         {
-            return await _publicRepository.GetFeedBackRepository.GetById(id);
+            return await _publicRepository.GetEssayFeedBackRepository.GetById(id);
         }
 
-        public void Insert(FeedBack feedBack)
+        public void Insert(EssayFeedBack feedBack)
         {
-            _publicRepository.GetFeedBackRepository.Insert(feedBack);
+            _publicRepository.GetEssayFeedBackRepository.Insert(feedBack);
         }
 
         public bool Exists(int id)
         {
-            return _publicRepository.GetFeedBackRepository.Exists(id);
+            return _publicRepository.GetEssayFeedBackRepository.Exists(id);
         }
 
-        internal void Update(FeedBack feedBack, FeedBack oldFeedBack)
+        internal void Update(EssayFeedBack feedBack, EssayFeedBack oldFeedBack)
         {
-            _publicRepository.GetFeedBackRepository.Update(feedBack, oldFeedBack);
+            _publicRepository.GetEssayFeedBackRepository.Update(feedBack, oldFeedBack);
         }
 
-        internal void Delete(FeedBack feedBack)
+        internal void Delete(EssayFeedBack feedBack)
         {
-            _publicRepository.GetFeedBackRepository.Delete(feedBack);
+            _publicRepository.GetEssayFeedBackRepository.Delete(feedBack);
         }
 
     }

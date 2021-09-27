@@ -14,15 +14,8 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         [Required(AllowEmptyStrings = false)]
         public string Text { get; set; }
 
-
-
-        public int AnswerId { get; set; }
-        public Answer Answer { get; set; }
-
-
         [Required(AllowEmptyStrings = false)]
         public string TeacherId { get; set; }
-
 
 
     }

@@ -3,17 +3,17 @@ using iread_assignment_ms.DataAccess.Data.Entity;
 
 namespace iread_assignment_ms.DataAccess.Repo
 {
-    public interface IFeedBackRepository
+    public interface IEssayFeedBackRepository
     {
-        public Task<FeedBack> GetById(int id);
+        public Task<EssayFeedBack> GetById(int id);
 
-        public void Insert(FeedBack feedBack);
+        public void Insert(EssayFeedBack feedBack);
 
-        public void Delete(FeedBack feedBack);
+        public void Delete(EssayFeedBack feedBack);
 
         public bool Exists(int id);
 
-        public void Update(FeedBack feedBack, FeedBack oldFeedBack);
+        public void Update(EssayFeedBack feedBack, EssayFeedBack oldFeedBack);
 
     }
 }

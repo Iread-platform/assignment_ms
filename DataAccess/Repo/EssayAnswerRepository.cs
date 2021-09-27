@@ -22,7 +22,10 @@ namespace iread_assignment_ms.DataAccess.Repo
         public async Task<EssayAnswer> GetById(int id, bool withQuestion)
         {
             return withQuestion ?
-             await _context.EssayAnswer.Include(e => e.Question).ThenInclude(q => q.Assignment).SingleOrDefaultAsync(m => m.AnswerId == id) :
+             await _context.EssayAnswer
+             .Include(e => e.Question)
+             .ThenInclude(q => ((EssayQuestion)q).Assignment)
+             .SingleOrDefaultAsync(m => m.AnswerId == id) :
              await _context.EssayAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
         }
 

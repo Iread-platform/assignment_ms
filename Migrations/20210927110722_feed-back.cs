@@ -14,8 +14,9 @@ namespace iread_assignment_ms.Migrations
                     FeedBackId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Text = table.Column<string>(type: "text", nullable: false),
-                    AnswerId = table.Column<int>(type: "int", nullable: false),
-                    TeacherId = table.Column<string>(type: "text", nullable: false)
+                    TeacherId = table.Column<string>(type: "text", nullable: false),
+                    AnswerId = table.Column<int>(type: "int", nullable: true),
+                    Discriminator = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,7 +26,7 @@ namespace iread_assignment_ms.Migrations
                         column: x => x.AnswerId,
                         principalTable: "Answer",
                         principalColumn: "AnswerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

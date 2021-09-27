@@ -9,7 +9,7 @@ using iread_assignment_ms.DataAccess.Data;
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210927091939_feedback")]
+    [Migration("20210927110722_feed-back")]
     partial class feedback
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,8 +218,12 @@ namespace iread_assignment_ms.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AnswerId")
+                    b.Property<int?>("AnswerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("TeacherId")
                         .IsRequired()
@@ -234,6 +238,8 @@ namespace iread_assignment_ms.Migrations
                     b.HasIndex("AnswerId");
 
                     b.ToTable("FeedBack");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("FeedBack");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Question", b =>
@@ -307,6 +313,13 @@ namespace iread_assignment_ms.Migrations
                     b.HasIndex("MultiChoiceQuestionId");
 
                     b.HasDiscriminator().HasValue("MultiChoiceAnswer");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayFeedBack", b =>
+                {
+                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.FeedBack");
+
+                    b.HasDiscriminator().HasValue("EssayFeedBack");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
@@ -409,13 +422,9 @@ namespace iread_assignment_ms.Migrations
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.FeedBack", b =>
                 {
-                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Answer", "Answer")
-                        .WithMany()
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
+                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Answer", null)
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("AnswerId");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
@@ -482,6 +491,11 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("Assignment");
 
                     b.Navigation("RightChoice");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Answer", b =>
+                {
+                    b.Navigation("FeedBacks");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>

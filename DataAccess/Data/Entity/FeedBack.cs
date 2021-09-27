@@ -21,9 +21,6 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
 
 
         [Required(AllowEmptyStrings = false)]
-        public string StudentId { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
         public string TeacherId { get; set; }
 
 

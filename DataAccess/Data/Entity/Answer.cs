@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using iread_assignment_ms.DataAccess.Data.Type;
@@ -24,7 +25,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         [Required(AllowEmptyStrings = false)]
         public string StudentLastName { get; set; }
         public bool IsAnswered { get; set; }
-
+        public List<FeedBack> FeedBacks { get; set; }
 
 
     }

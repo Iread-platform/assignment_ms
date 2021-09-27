@@ -4,6 +4,7 @@ using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.EssayQuestion;
+using iread_assignment_ms.Web.Dto.FeedBack;
 using iread_assignment_ms.Web.Dto.Interaction;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.StoryDto;
@@ -66,6 +67,10 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<AnswerInteraction, AnswerInteractionDto>();
 
             CreateMap<StoryDto, AssignmentStory>();
+
+
+            CreateMap<FeedBack, FeedBackDto>();
+            CreateMap<FeedBackCreateDto, FeedBack>();
 
 
         }

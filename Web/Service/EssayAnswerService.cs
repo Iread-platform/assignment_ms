@@ -13,9 +13,9 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository = publicRepository;
         }
 
-        public async Task<EssayAnswer> GetById(int id)
+        public async Task<EssayAnswer> GetById(int id, bool withQuestion)
         {
-            return await _publicRepository.GetEssayAnswerRepository.GetById(id);
+            return await _publicRepository.GetEssayAnswerRepository.GetById(id, withQuestion);
         }
 
         public void Insert(EssayAnswer essayAnswer)

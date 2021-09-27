@@ -19,9 +19,14 @@ namespace iread_assignment_ms.DataAccess.Repo
             _mapper = mapper;
         }
 
-        public async Task<EssayAnswer> GetById(int id)
+        public async Task<EssayAnswer> GetById(int id, bool withQuestion)
         {
-            return await _context.EssayAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
+            return withQuestion ?
+             await _context.EssayAnswer
+             .Include(e => e.Question)
+             .ThenInclude(q => ((EssayQuestion)q).Assignment)
+             .SingleOrDefaultAsync(m => m.AnswerId == id) :
+             await _context.EssayAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
         }
 
         public void Insert(EssayAnswer essayAnswer)

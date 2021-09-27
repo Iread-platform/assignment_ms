@@ -5,7 +5,7 @@ namespace iread_assignment_ms.DataAccess.Repo
 {
     public interface IEssayAnswerRepository
     {
-        public Task<EssayAnswer> GetById(int id);
+        public Task<EssayAnswer> GetById(int id, bool withQuestion);
 
         public void Insert(EssayAnswer essayAnswer);
 

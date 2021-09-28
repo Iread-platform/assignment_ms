@@ -74,7 +74,6 @@ namespace iread_assignment_ms.Web.Controller
                      .Select(c => c.Value).SingleOrDefault();
             EssayAnswer essayAnswerEntity = essayQuestionEntity.EssayAnswers.Single(ea => ea.StudentId == myId);
             essayAnswerEntity.Text = essayAnswer.Text;
-            essayAnswerEntity.IsAnswered = true;
             _essayAnswerService.Update(essayAnswerEntity);
 
             return Ok(_mapper.Map<EssayAnswerDto>(essayAnswerEntity));
@@ -108,7 +107,6 @@ namespace iread_assignment_ms.Web.Controller
                      .Select(c => c.Value).SingleOrDefault();
             MultiChoiceAnswer multiChoiceAnswerEntity = multiChoiceEntity.MultiChoiceAnswers.Single(ea => ea.StudentId == myId);
             multiChoiceAnswerEntity.ChosenChoiceId = multiChoiceAnswer.ChosenChoiceId;
-            multiChoiceAnswerEntity.IsAnswered = true;
             _multiChoiceAnswerService.Update(multiChoiceAnswerEntity);
 
             return Ok(_mapper.Map<MultiChoiceAnswerDto>(multiChoiceAnswerEntity));
@@ -198,7 +196,7 @@ namespace iread_assignment_ms.Web.Controller
                     // check if this question is not answered before
                     if (interactionAnswer.IsAnswered)
                     {
-                        ModelState.AddModelError("Question", "Question is answered before");
+                        ModelState.AddModelError("Question", "Question is answered and submitted before");
                     }
                     else
                     {   // if the answer not confirmed (blocked)
@@ -243,7 +241,7 @@ namespace iread_assignment_ms.Web.Controller
                     // check if this question is not answered before
                     if (multiChoiceAnswer.IsAnswered)
                     {
-                        ModelState.AddModelError("Question", "Question is answered before");
+                        ModelState.AddModelError("Question", "Question is answered and submitted before");
                     }
 
                     return;
@@ -275,7 +273,7 @@ namespace iread_assignment_ms.Web.Controller
                     // check if this question is not answered before
                     if (essayAnswer.IsAnswered)
                     {
-                        ModelState.AddModelError("Question", "Question is answered before");
+                        ModelState.AddModelError("Question", "Question is answered and submitted before");
                     }
 
                     return;
@@ -286,6 +284,8 @@ namespace iread_assignment_ms.Web.Controller
             ModelState.AddModelError("Question", "Question not yours");
 
         }
+
+
 
 
 

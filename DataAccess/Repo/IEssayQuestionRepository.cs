@@ -16,5 +16,6 @@ namespace iread_assignment_ms.DataAccess.Repo
         public void Update(EssayQuestion essayQuestion, EssayQuestion oldEssayQuestion);
 
         public void Update(EssayQuestion essayQuestion);
+        public void SubmitAnswers(EssayQuestion essayQuestion);
     }
 }

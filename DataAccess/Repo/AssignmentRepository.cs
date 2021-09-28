@@ -77,5 +77,46 @@ namespace iread_assignment_ms.DataAccess.Repo
                         .ToListAsync();
 
         }
+
+        public void SubmitAnswers(int assignmentId, string studentId)
+        {
+            _context.Database.ExecuteSqlRaw(
+              @$"UPDATE Answer SET IsAnswered = 1 
+                WHERE StudentId = '{studentId}' AND
+                AnswerId in 
+                (SELECT a.AnswerId FROM Answer a 
+                WHERE a.EssayQuestionQuestionId in 
+                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}) 
+                or a.MultiChoiceQuestionId in  
+                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}) 
+                or a.InteractionQuestionQuestionId in  
+                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}))"
+                );
+        }
+
+        public bool IsMine(int assignmentId, string studentId)
+        {
+            return _context.Assignments
+            .Include(a => a.EssayQuestions)
+                        .ThenInclude(q => q.EssayAnswers)
+            .Include(a => a.InteractionQuestions)
+                        .ThenInclude(q => q.InteractionAnswers)
+            .Include(a => a.MultiChoices)
+                        .ThenInclude(q => q.MultiChoiceAnswers)
+
+            .Where(a => a.AssignmentId == assignmentId
+            &&
+            (
+                (a.EssayQuestions.Any(q => q.EssayAnswers.Any(a => a.StudentId == studentId)))
+            ||
+                (a.InteractionQuestions.Any(q => q.InteractionAnswers.Any(a => a.StudentId == studentId)))
+            ||
+                (a.MultiChoices.Any(q => q.MultiChoiceAnswers.Any(a => a.StudentId == studentId)))
+            )
+            ).Any();
+
+
+
+        }
     }
 }

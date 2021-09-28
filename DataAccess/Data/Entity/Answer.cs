@@ -24,7 +24,7 @@ namespace iread_assignment_ms.DataAccess.Data.Entity
         public string StudentFirstName { get; set; }
         [Required(AllowEmptyStrings = false)]
         public string StudentLastName { get; set; }
-        public bool IsAnswered { get; set; }
+        public bool IsAnswered { get; set; } // answered means submitted also
         public List<FeedBack> FeedBacks { get; set; }
 
 

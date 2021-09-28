@@ -58,5 +58,10 @@ namespace iread_assignment_ms.DataAccess.Repo
             return _context.EssayQuestion.Any(r => r.QuestionId == id);
         }
 
+        public void SubmitAnswers(EssayQuestion essayQuestion)
+        {
+            _context.Database.ExecuteSqlRaw(
+               $"Update Answer set IsAnswered = 1 where EssayQuestionQuestionId = {essayQuestion.QuestionId}");
+        }
     }
 }

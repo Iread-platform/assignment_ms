@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using iread_assignment_ms.DataAccess.Data;
@@ -60,5 +61,16 @@ namespace iread_assignment_ms.DataAccess.Repo
             _context.AnswerInteraction.Add(answerInteraction);
             _context.SaveChanges();
         }
+
+        public void RemoveByInteractionAndAnswer(int AnswerId, int interactionId)
+        {
+            _context.AnswerInteraction.RemoveRange(
+                _context.AnswerInteraction.Where(
+                            ia => ia.InteractionId == interactionId
+                               && ia.InteractionAnswerId == AnswerId).ToList());
+            _context.SaveChanges();
+
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using iread_assignment_ms.DataAccess;
 using iread_assignment_ms.DataAccess.Data.Entity;
 
@@ -46,6 +47,12 @@ namespace iread_assignment_ms.Web.Service
         internal void Delete(InteractionAnswer interactionAnswer)
         {
             _publicRepository.GetInteractionAnswerRepository.Delete(interactionAnswer);
+        }
+
+        internal void RemoveInteractionFromAnswer(int AnswerId, int interactionId)
+        {
+            _publicRepository.GetInteractionAnswerRepository
+            .RemoveByInteractionAndAnswer(AnswerId, interactionId);
         }
     }
 }

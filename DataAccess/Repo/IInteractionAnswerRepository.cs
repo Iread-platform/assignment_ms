@@ -17,5 +17,7 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public void Update(InteractionAnswer interactionAnswer);
         public void AddInteractionToAnswer(AnswerInteraction answerInteraction);
+        public void RemoveByInteractionAndAnswer(int AnswerId, int interactionId);
+
     }
 }

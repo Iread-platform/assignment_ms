@@ -149,6 +149,39 @@ namespace iread_assignment_ms.Web.Controller
             return Ok(_mapper.Map<InteractionAnswerDto>(interactionAnswerEntity));
         }
 
+
+
+        //POST: api/Assignment/Question/3/interaction-answer/remove
+        [Authorize(Roles = Policies.Student, AuthenticationSchemes = "Bearer")]
+        [HttpDelete("{id}/interaction-answer/{interactionId}/remove")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult RemoveInteractionAnswer([FromRoute] int id,
+        [FromRoute] int interactionId)
+        {
+            // check if the question exist
+            InteractionQuestion interactionQuestionEntity = _interactionQuestionService.GetById(id).GetAwaiter().GetResult();
+            if (interactionQuestionEntity == null)
+            {
+                ModelState.AddModelError("Id", "Question not found");
+                return BadRequest(ErrorMessage.ModelStateParser(ModelState));
+            }
+
+            string myId = User.Claims.Where(c => c.Type == "sub")
+                     .Select(c => c.Value).SingleOrDefault();
+            InteractionAnswer interactionAnswerEntity = interactionQuestionEntity.InteractionAnswers.Single(ea => ea.StudentId == myId);
+
+            _interactionAnswerService.RemoveInteractionFromAnswer(
+                interactionAnswerEntity.AnswerId,
+                    interactionId
+                );
+
+            return NoContent();
+        }
+
+
+
+
         private void CheckInteractionAnswer(InteractionQuestion interactionQuestionEntity, AnswerInteractionCreateDto interaction)
         {
 

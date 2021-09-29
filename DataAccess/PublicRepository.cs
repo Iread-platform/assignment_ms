@@ -16,8 +16,6 @@ namespace iread_assignment_ms.DataAccess
         private IEssayAnswerRepository _essayAnswerRepository;
         private IMultiChoiceAnswerRepository _multiChoiceAnswerRepository;
         private IInteractionAnswerRepository _interactionAnswerRepository;
-        private IEssayFeedBackRepository _essayFeedBackRepository;
-
 
 
         private readonly IMapper _mapper;
@@ -99,12 +97,6 @@ namespace iread_assignment_ms.DataAccess
             }
         }
 
-        public IEssayFeedBackRepository GetEssayFeedBackRepository
-        {
-            get
-            {
-                return _essayFeedBackRepository ??= new EssayFeedBackRepository(_context, _mapper);
-            }
-        }
+
     }
 }

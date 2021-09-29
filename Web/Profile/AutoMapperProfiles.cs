@@ -69,10 +69,6 @@ namespace iread_assignment_ms.Web.Profile
             CreateMap<StoryDto, AssignmentStory>();
 
 
-            CreateMap<EssayFeedBack, FeedBackDto>();
-            CreateMap<FeedBackCreateDto, EssayFeedBack>();
-
-
         }
     }
 }

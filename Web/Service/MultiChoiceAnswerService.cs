@@ -13,9 +13,9 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository = publicRepository;
         }
 
-        public async Task<MultiChoiceAnswer> GetById(int id)
+        public async Task<MultiChoiceAnswer> GetById(int id, bool withQuestion)
         {
-            return await _publicRepository.GetMultiChoiceAnswerRepository.GetById(id);
+            return await _publicRepository.GetMultiChoiceAnswerRepository.GetById(id, withQuestion);
         }
 
         public void Insert(MultiChoiceAnswer multiChoiceAnswer)

@@ -19,9 +19,14 @@ namespace iread_assignment_ms.DataAccess.Repo
             _mapper = mapper;
         }
 
-        public async Task<MultiChoiceAnswer> GetById(int id)
+        public async Task<MultiChoiceAnswer> GetById(int id, bool withQuestion)
         {
-            return await _context.MultiChoiceAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
+            return withQuestion ?
+             await _context.MultiChoiceAnswer
+             .Include(e => e.Question)
+             .ThenInclude(q => ((MultiChoice)q).Assignment)
+             .SingleOrDefaultAsync(m => m.AnswerId == id) :
+             await _context.MultiChoiceAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
         }
 
         public void Insert(MultiChoiceAnswer multiChoiceAnswer)

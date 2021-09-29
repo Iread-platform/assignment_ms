@@ -14,9 +14,9 @@ namespace iread_assignment_ms.Web.Service
             _publicRepository = publicRepository;
         }
 
-        public async Task<InteractionAnswer> GetById(int id)
+        public async Task<InteractionAnswer> GetById(int id, bool withQuestion)
         {
-            return await _publicRepository.GetInteractionAnswerRepository.GetById(id);
+            return await _publicRepository.GetInteractionAnswerRepository.GetById(id, withQuestion);
         }
 
         public void Insert(InteractionAnswer interactionAnswer)

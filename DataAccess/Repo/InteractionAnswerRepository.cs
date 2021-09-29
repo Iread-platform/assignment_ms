@@ -20,9 +20,14 @@ namespace iread_assignment_ms.DataAccess.Repo
             _mapper = mapper;
         }
 
-        public async Task<InteractionAnswer> GetById(int id)
+        public async Task<InteractionAnswer> GetById(int id, bool withQuestion)
         {
-            return await _context.InteractionAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
+            return withQuestion ?
+            await _context.InteractionAnswer
+            .Include(e => e.Question)
+            .ThenInclude(q => ((InteractionQuestion)q).Assignment)
+            .SingleOrDefaultAsync(m => m.AnswerId == id) :
+            await _context.InteractionAnswer.SingleOrDefaultAsync(m => m.AnswerId == id);
         }
 
         public void Insert(InteractionAnswer interactionAnswer)

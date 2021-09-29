@@ -5,7 +5,7 @@ namespace iread_assignment_ms.DataAccess.Repo
 {
     public interface IMultiChoiceAnswerRepository
     {
-        public Task<MultiChoiceAnswer> GetById(int id);
+        public Task<MultiChoiceAnswer> GetById(int id, bool withQuestion);
 
         public void Insert(MultiChoiceAnswer multiChoiceAnswer);
 

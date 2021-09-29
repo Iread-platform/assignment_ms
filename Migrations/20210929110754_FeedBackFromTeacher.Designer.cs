@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iread_assignment_ms.DataAccess.Data;
 
 namespace iread_assignment_ms.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210929110754_FeedBackFromTeacher")]
+    partial class FeedBackFromTeacher
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,6 +215,36 @@ namespace iread_assignment_ms.Migrations
                     b.ToTable("Choice");
                 });
 
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.FeedBack", b =>
+                {
+                    b.Property<int>("FeedBackId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AnswerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("FeedBackId");
+
+                    b.HasIndex("AnswerId");
+
+                    b.ToTable("FeedBack");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("FeedBack");
+                });
+
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Question", b =>
                 {
                     b.Property<int>("QuestionId")
@@ -284,6 +316,13 @@ namespace iread_assignment_ms.Migrations
                     b.HasIndex("MultiChoiceQuestionId");
 
                     b.HasDiscriminator().HasValue("MultiChoiceAnswer");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayFeedBack", b =>
+                {
+                    b.HasBaseType("iread_assignment_ms.DataAccess.Data.Entity.FeedBack");
+
+                    b.HasDiscriminator().HasValue("EssayFeedBack");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", b =>
@@ -384,6 +423,13 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("MultiChoice");
                 });
 
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.FeedBack", b =>
+                {
+                    b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.Answer", null)
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("AnswerId");
+                });
+
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.EssayAnswer", b =>
                 {
                     b.HasOne("iread_assignment_ms.DataAccess.Data.Entity.EssayQuestion", null)
@@ -448,6 +494,11 @@ namespace iread_assignment_ms.Migrations
                     b.Navigation("Assignment");
 
                     b.Navigation("RightChoice");
+                });
+
+            modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Answer", b =>
+                {
+                    b.Navigation("FeedBacks");
                 });
 
             modelBuilder.Entity("iread_assignment_ms.DataAccess.Data.Entity.Assignment", b =>

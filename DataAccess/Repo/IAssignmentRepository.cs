@@ -21,5 +21,7 @@ namespace iread_assignment_ms.DataAccess.Repo
         public Task<List<Assignment>> GetByStudent(string myId);
         public void SubmitAnswers(int assignmentId, string studentId);
         public bool IsMine(int assignmentId, string studentId);
+        public AssignmentStatus GetStatusByAssignmentStudentId(int assignmentId, string studentId);
+        public void Update(AssignmentStatus assignmentStatus);
     }
 }

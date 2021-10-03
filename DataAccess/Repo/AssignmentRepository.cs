@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using iread_assignment_ms.DataAccess.Data;
 using iread_assignment_ms.DataAccess.Data.Entity;
+using iread_assignment_ms.DataAccess.Data.Entity.Type;
 using iread_assignment_ms.Web.Dto.AssignmentDTO;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
 using Microsoft.EntityFrameworkCore;
@@ -92,6 +93,11 @@ namespace iread_assignment_ms.DataAccess.Repo
                 or a.InteractionQuestionQuestionId in  
                 (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}))"
                 );
+
+            _context.Database.ExecuteSqlRaw(
+             @$"UPDATE AssignmentStatus SET Value = 'WaitingForFeedBack' 
+                WHERE StudentId = '{studentId}' AND
+                AssignmentId = '{assignmentId}'");
         }
 
         public bool IsMine(int assignmentId, string studentId)
@@ -117,6 +123,18 @@ namespace iread_assignment_ms.DataAccess.Repo
 
 
 
+        }
+
+        public AssignmentStatus GetStatusByAssignmentStudentId(int assignmentId, string studentId)
+        {
+            return _context.AssignmentStatus.Include(ass => ass.Assignment).Where(ass => ass.StudentId == studentId
+            && ass.AssignmentId == assignmentId).FirstOrDefault();
+        }
+
+        public void Update(AssignmentStatus assignmentStatus)
+        {
+            _context.AssignmentStatus.Update(assignmentStatus);
+            _context.SaveChanges();
         }
     }
 }

@@ -55,5 +55,15 @@ namespace iread_assignment_ms.Web.Service
         {
             return _publicRepository.GetAssignmentRepository.IsMine(assignment.AssignmentId, studentId);
         }
+
+        internal AssignmentStatus GetStatusByAssignmentStudentId(int id, string studentId)
+        {
+            return _publicRepository.GetAssignmentRepository.GetStatusByAssignmentStudentId(id, studentId);
+        }
+
+        internal void Update(AssignmentStatus assignmentStatus)
+        {
+            _publicRepository.GetAssignmentRepository.Update(assignmentStatus);
+        }
     }
 }

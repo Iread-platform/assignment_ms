@@ -85,13 +85,13 @@ namespace iread_assignment_ms.DataAccess.Repo
               @$"UPDATE Answer SET IsAnswered = 1 
                 WHERE StudentId = '{studentId}' AND
                 AnswerId in 
-                (SELECT a.AnswerId FROM Answer a 
-                WHERE a.EssayQuestionQuestionId in 
-                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}) 
-                or a.MultiChoiceQuestionId in  
-                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}) 
-                or a.InteractionQuestionQuestionId in  
-                (Select q.QuestionId FROM Question q where q.AssignmentId = {assignmentId}))"
+                (SELECT AnswerId FROM Answer 
+                WHERE EssayQuestionQuestionId in 
+                (Select QuestionId FROM Question where AssignmentId = {assignmentId}) 
+                or MultiChoiceQuestionId in  
+                (Select QuestionId FROM Question where AssignmentId = {assignmentId}) 
+                or InteractionQuestionQuestionId in  
+                (Select QuestionId FROM Question where AssignmentId = {assignmentId}))"
                 );
 
             _context.Database.ExecuteSqlRaw(

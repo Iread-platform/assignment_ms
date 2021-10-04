@@ -81,8 +81,8 @@ namespace iread_assignment_ms.DataAccess.Repo
 
         public void SubmitAnswers(int assignmentId, string studentId)
         {
-            _context.Database.ExecuteSqlRaw(
-              @$"UPDATE Answer SET IsAnswered = 1 
+            var studentAnswersList = _context.Answer
+                                   .FromSqlRaw($@"SELECT * FROM Answer 
                 WHERE StudentId = '{studentId}' AND
                 AnswerId in 
                 (SELECT AnswerId FROM Answer 
@@ -91,13 +91,12 @@ namespace iread_assignment_ms.DataAccess.Repo
                 or MultiChoiceQuestionId in  
                 (Select QuestionId FROM Question where AssignmentId = {assignmentId}) 
                 or InteractionQuestionQuestionId in  
-                (Select QuestionId FROM Question where AssignmentId = {assignmentId}))"
-                );
+                (Select QuestionId FROM Question where AssignmentId = {assignmentId}))")
+                                   .ToList<Answer>();
 
-            _context.Database.ExecuteSqlRaw(
-             @$"UPDATE AssignmentStatus SET Value = 'WaitingForFeedBack' 
-                WHERE StudentId = '{studentId}' AND
-                AssignmentId = '{assignmentId}'");
+            studentAnswersList.ForEach(sa => sa.IsAnswered = true);
+            _context.Answer.UpdateRange(studentAnswersList);
+            _context.SaveChanges();
         }
 
         public bool IsMine(int assignmentId, string studentId)

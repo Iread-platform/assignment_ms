@@ -61,6 +61,11 @@ namespace iread_assignment_ms.Web.Service
             return _publicRepository.GetAssignmentRepository.GetStatusByAssignmentStudentId(id, studentId);
         }
 
+        internal async Task<Question> GetQuestionById(int questionId)
+        {
+            return await _publicRepository.GetAssignmentRepository.GetQuestionById(questionId);
+        }
+
         internal void Update(AssignmentStatus assignmentStatus)
         {
             _publicRepository.GetAssignmentRepository.Update(assignmentStatus);

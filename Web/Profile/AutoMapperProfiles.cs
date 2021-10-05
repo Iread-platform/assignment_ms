@@ -8,6 +8,7 @@ using iread_assignment_ms.Web.Dto.FeedBack;
 using iread_assignment_ms.Web.Dto.Interaction;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.StoryDto;
+using iread_assignment_ms.Web.DTO.Question;
 using iread_assignment_ms.Web.DTO.StoryDto;
 
 namespace iread_assignment_ms.Web.Profile
@@ -68,6 +69,8 @@ namespace iread_assignment_ms.Web.Profile
 
             CreateMap<StoryDto, AssignmentStory>();
 
+
+            CreateMap<Question, QuestionDto>();
 
         }
     }

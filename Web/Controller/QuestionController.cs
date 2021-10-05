@@ -11,6 +11,8 @@ using iread_assignment_ms.DataAccess.Data.Type;
 using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.EssayQuestion;
 using iread_assignment_ms.Web.Dto.Interaction;
+using System.Threading.Tasks;
+using iread_assignment_ms.Web.DTO.Question;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -37,6 +39,22 @@ namespace iread_assignment_ms.Web.Controller
             _multiChoiceService = multiChoiceService;
             _essayQuestionService = essayQuestionService;
             _interactionQuestionService = interactionQuestionService;
+        }
+
+
+        // GET: api/Assignment/Question/get/1
+        [HttpGet("Question/get/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetQuestionById([FromRoute] int id)
+        {
+            Question question = await _assignmentService.GetQuestionById(id);
+
+            if (question == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<QuestionDto>(question));
         }
 
 

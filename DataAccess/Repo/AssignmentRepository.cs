@@ -137,5 +137,18 @@ namespace iread_assignment_ms.DataAccess.Repo
             _context.AssignmentStatus.Update(assignmentStatus);
             _context.SaveChanges();
         }
+
+        public async Task<Question> GetQuestionById(int questionId)
+        {
+            return await _context.Question.FromSqlRaw(@$"SELECT * 
+            FROM Question WHERE QuestionId = {questionId}"
+            ).Select(q => new Question()
+            {
+                AssignmentId = q.AssignmentId,
+                QuestionId = q.QuestionId,
+                Text = q.Text
+            }).
+                FirstOrDefaultAsync();
+        }
     }
 }

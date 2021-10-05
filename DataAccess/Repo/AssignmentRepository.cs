@@ -94,8 +94,10 @@ namespace iread_assignment_ms.DataAccess.Repo
                 (Select QuestionId FROM Question where AssignmentId = {assignmentId}))")
                                    .ToList<Answer>();
 
-            studentAnswersList.ForEach(sa => sa.IsAnswered = true);
-            _context.Answer.UpdateRange(studentAnswersList);
+            AssignmentStatus statusAssgiment = _context.AssignmentStatus.Where(ass => ass.AssignmentId == assignmentId && ass.StudentId == studentId).FirstOrDefault();
+            statusAssgiment.Value = AssignmentStatusTypes.WaitingForFeedBack.ToString();
+            _context.AssignmentStatus.Update(statusAssgiment);
+
             _context.SaveChanges();
         }
 

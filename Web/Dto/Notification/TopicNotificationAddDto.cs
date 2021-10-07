@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
+
+
 namespace iread_assignment_ms.Web.Dto.Notification
 {
-    public class SingletNotificationDto
+    public class TopicNotificationAddDto
     {
         public string Title { get; set; }
 
@@ -9,9 +11,10 @@ namespace iread_assignment_ms.Web.Dto.Notification
         {
             get; set;
         }
-        public int UserId { get; set; }
-
+        public string TopicName { get; set; }
         [JsonPropertyName("ExtraData")]
+
         public ExtraDataDto ExtraData { get; set; }
+
     }
 }

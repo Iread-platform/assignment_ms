@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace iread_assignment_ms.Web.Dto.Notification
 {
@@ -11,6 +11,7 @@ namespace iread_assignment_ms.Web.Dto.Notification
             get; set;
         }
         public int TopicID { get; set; }
+        [JsonPropertyName("ExtraData")]
 
         public ExtraDataDto ExtraData { get; set; }
 

@@ -10,6 +10,7 @@ using System.Linq;
 using iread_assignment_ms.Web.Util;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using System.Text.Json;
 using iread_assignment_ms.Web.DTO.Story;
 using iread_assignment_ms.Web.Dto.School;
 using iread_assignment_ms.DataAccess.Data.Entity.Type;
@@ -18,6 +19,7 @@ using iread_assignment_ms.Web.Dto.MultiChoice;
 using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
+using iread_assignment_ms.Web.Dto.Notification;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -171,8 +173,28 @@ namespace iread_assignment_ms.Web.Controller
 
             _assignmentService.Insert(assignmentEntity);
 
-            return CreatedAtAction("GetById", new { id = assignmentEntity.AssignmentId }, _mapper.Map<AssignmentDto>(assignmentEntity));
+            return CreatedAtAction("GetById", new
+            {
+                id = assignmentEntity.AssignmentId
+            }, _mapper.Map<AssignmentDto>(assignmentEntity));
 
+        }
+        private async Task<SingletNotificationDto> SendSingleNotification(string title, string body, int userId, string message, string route)
+        {
+            SingletNotificationDto response = new SingletNotificationDto() { Body = body, UserId = 1, Title = title, ExtraData = new ExtraDataDto() { GoTo = route, Messsage = message } };
+            response = await _consulHttpClient.PostBodyAsync<SingletNotificationDto>("notifications_ms", $"/api/Notification/Send",
+             response);
+
+            return response;
+        }
+
+        private async Task<TopicNotificationAddDto> SendTopicNotification(string title, string body, string topicName, string message, string route)
+        {
+            TopicNotificationAddDto response = new TopicNotificationAddDto() { Body = body, TopicName = topicName, Title = title, ExtraData = new ExtraDataDto() { GoTo = route, Messsage = message } };
+            response = await _consulHttpClient.PostBodyAsync<TopicNotificationAddDto>("notifications_ms", $"/api/Notification/broadcast-by-topic-title",
+             response);
+
+            return response;
         }
 
         private void CheckAddValidation(AssignmentCreateDto assignment, Assignment assignmentEntity)

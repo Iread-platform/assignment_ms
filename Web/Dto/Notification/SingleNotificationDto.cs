@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace iread_notifications_ms.Web.DTO
+namespace iread_assignment_ms.Web.Dto.Notification
 {
     public class SingletNotificationDto
     {

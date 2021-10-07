@@ -20,6 +20,7 @@ using iread_assignment_ms.Web.Dto.AssignmentDto;
 using iread_assignment_ms.Web.Dto.AttachmentDto;
 using iread_assignment_ms.Web.Dto.StoryDto;
 using iread_assignment_ms.Web.Dto.Notification;
+using iread_assignment_ms.Web.Dto.Topic;
 
 namespace iread_assignment_ms.Web.Controller
 {
@@ -192,6 +193,24 @@ namespace iread_assignment_ms.Web.Controller
         {
             TopicNotificationAddDto response = new TopicNotificationAddDto() { Body = body, TopicName = topicName, Title = title, ExtraData = new ExtraDataDto() { GoTo = route, Messsage = message } };
             response = await _consulHttpClient.PostBodyAsync<TopicNotificationAddDto>("notifications_ms", $"/api/Notification/broadcast-by-topic-title",
+             response);
+
+            return response;
+        }
+
+        private async Task<AddTopicDto> CreateTopic(string topicName)
+        {
+            AddTopicDto response = new AddTopicDto() { Title = topicName };
+            response = await _consulHttpClient.PostBodyAsync<AddTopicDto>("notifications_ms", $"/api/Topic/Add",
+             response);
+
+            return response;
+        }
+
+        private async Task<TopicSubscribeDto> subscribeToTopic(string topicName, List<int> users)
+        {
+            TopicSubscribeDto response = new TopicSubscribeDto() { TopicTitle = topicName, Users = users };
+            response = await _consulHttpClient.PostBodyAsync<TopicSubscribeDto>("notifications_ms", $"/api/Topic/Subscribe",
              response);
 
             return response;

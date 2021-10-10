@@ -14,6 +14,7 @@ using iread_assignment_ms.Web.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +80,8 @@ namespace iread_assignment_ms
             }));
             services.AddConsulConfig(Configuration);
             services.AddHttpClient<IConsulHttpClientService, ConsulHttpClientService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
 
             // return only msg of errors as a list when get invalid ModelState in background

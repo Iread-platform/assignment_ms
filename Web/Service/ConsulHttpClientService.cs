@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Consul;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -16,11 +17,14 @@ namespace iread_assignment_ms.Web.Service
     {
         private readonly HttpClient _client;
         private IConsulClient _consulClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ConsulHttpClientService(HttpClient client, IConsulClient consulclient)
+
+        public ConsulHttpClientService(HttpClient client, IConsulClient consulclient, IHttpContextAccessor httpContextAccessor)
         {
             _client = client;
             _consulClient = consulclient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<T> GetAsync<T>(string serviceName, string requestUri)
@@ -252,6 +256,13 @@ namespace iread_assignment_ms.Web.Service
 
         public async Task<bool> Delete(string serviceName, string requestUri)
         {
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                string token = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            
             var uri = GetRequestUriAsync(serviceName, requestUri).Result;
 
             var response = await _client.DeleteAsync(uri);

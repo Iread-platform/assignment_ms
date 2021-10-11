@@ -176,6 +176,8 @@ namespace iread_assignment_ms.Web.Controller
                     interactionId
                 );
 
+
+            var res = _consulHttpClient.Delete("interaction_ms", $"api/interaction/{interactionId}/remove").GetAwaiter().GetResult();
             return NoContent();
         }
 

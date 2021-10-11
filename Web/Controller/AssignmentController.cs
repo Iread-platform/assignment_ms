@@ -148,7 +148,7 @@ namespace iread_assignment_ms.Web.Controller
         [HttpPost("add")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Insert([FromBody] AssignmentCreateDto assignment)
+        public async Task<IActionResult> Insert([FromBody] AssignmentCreateDto assignment)
         {
 
             if (!ModelState.IsValid)
@@ -174,21 +174,21 @@ namespace iread_assignment_ms.Web.Controller
 
             _assignmentService.Insert(assignmentEntity);
 
+            // NOTIFICATION Ms 
+            ClassDto classDto = _consulHttpClient.GetAsync<ClassDto>("school_ms", $"/api/School/Class/get/{assignment.ClassId}").Result;
+            await SendTopicNotification(title: "New assignment", body: "a new assiignment for the class " + classDto.Title, topicName: NotificationUtil.ClassTopicTitle(classDto), message: "", "Assignments/" + assignmentEntity.AssignmentId);
+            // NOTIFICATION Ms end
+
             return CreatedAtAction("GetById", new
             {
                 id = assignmentEntity.AssignmentId
             }, _mapper.Map<AssignmentDto>(assignmentEntity));
 
         }
-        private async Task<SingletNotificationDto> SendSingleNotification(string title, string body, int userId, string message, string route)
-        {
-            SingletNotificationDto response = new SingletNotificationDto() { Body = body, UserId = 1, Title = title, ExtraData = new ExtraDataDto() { GoTo = route, Messsage = message } };
-            response = await _consulHttpClient.PostBodyAsync<SingletNotificationDto>("notifications_ms", $"/api/Notification/Send",
-             response);
 
-            return response;
-        }
-
+        /*
+        * brief: Send Notifications to the assignment class.
+        */
         private async Task<TopicNotificationAddDto> SendTopicNotification(string title, string body, string topicName, string message, string route)
         {
             TopicNotificationAddDto response = new TopicNotificationAddDto() { Body = body, TopicName = topicName, Title = title, ExtraData = new ExtraDataDto() { GoTo = route, Messsage = message } };
@@ -197,25 +197,6 @@ namespace iread_assignment_ms.Web.Controller
 
             return response;
         }
-
-        private async Task<AddTopicDto> CreateTopic(string topicName)
-        {
-            AddTopicDto response = new AddTopicDto() { Title = topicName };
-            response = await _consulHttpClient.PostBodyAsync<AddTopicDto>("notifications_ms", $"/api/Topic/Add",
-             response);
-
-            return response;
-        }
-
-        private async Task<TopicSubscribeDto> subscribeToTopic(string topicName, List<int> users)
-        {
-            TopicSubscribeDto response = new TopicSubscribeDto() { TopicTitle = topicName, Users = users };
-            response = await _consulHttpClient.PostBodyAsync<TopicSubscribeDto>("notifications_ms", $"/api/Topic/Subscribe",
-             response);
-
-            return response;
-        }
-
         private void CheckAddValidation(AssignmentCreateDto assignment, Assignment assignmentEntity)
         {
             //check class id if exists

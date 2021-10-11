@@ -6,6 +6,6 @@ namespace iread_assignment_ms.Web.Dto.Topic
     {
         public string TopicTitle { get; set; }
 
-        public List<int> Users { get; set; }
+        public List<string> Users { get; set; }
     }
 }
